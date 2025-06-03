@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
-import { convertHHMMSSToSeconds, formatSecondsToHHMMSS } from "../../lib/utils/handleTimeUnits";
+import { useEffect, useState } from "react";
+import { convertHHMMSSToSeconds, formatSecondsToHHMMSS } from "../lib/utils/handleTimeUnits";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
 import { AspectRatioSelector } from "./ui/DropDown";
 import DownloadOption from "./ui/DownloadOption";
 import { ArrowLeft } from "lucide-react";
+import { useAspectRatioStore, useClippingWindowStore } from "../contexts/videoContext";
 
 interface VideoClipperProps {
     videoId: string;
@@ -13,28 +14,46 @@ interface VideoClipperProps {
     onBack: () => void;
 }
 
+type DownloadType = "audio" | "video";
+
+type VideoQuality =
+    | "144p"
+    | "360p"
+    | "720p"
+    | "1080p"
+    | "audio";
+
+interface DownloadOption {
+    title: string;
+    resolution: string;
+    premium: boolean;
+    quality: VideoQuality;
+    type: DownloadType;
+}
+
 export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) => {
-    const [clippingWindow, setClippingWindow] = useState({
-        startTime: "00:00:00",
-        endTime: formatSecondsToHHMMSS(duration)
-    });
-    const [aspectRatio, setAspectRatio] = useState("fullscreen");
+    // const [clippingWindow, setClippingWindow] = useState({
+    //     startTime: "00:00:00",
+    //     endTime: formatSecondsToHHMMSS(duration)
+    // });
+    const { startTime, endTime, setStartTime, setEndTime } = useClippingWindowStore();
+    const { aspectRatio, setAspectRatio } = useAspectRatioStore()
+    // const [aspectRatio, setAspectRatio] = useState("fullscreen");
     const [clipType, setClipType] = useState("Fullscreen");
     const [isDownloadOpen, setIsDownloadOpen] = useState(false);
-
-    const downloadOptions = [
-        { title: "Video / 144p", resolution: "256×144", size: "45.12 MB", premium: false },
-        { title: "Video / 360p", resolution: "640×360", size: "98.34 MB", premium: false },
-        { title: "Video / 720p", resolution: "1280×720", size: "171.08 MB", premium: true },
-        { title: "Video / 1080p", resolution: "1920×1080", size: "314.17 MB", premium: true },
-        { title: "Video / 1080p", resolution: "1920×1080", size: "314.17 MB", premium: true },
-        { title: "Video / 1080p", resolution: "1920×1080", size: "314.17 MB", premium: true },
-        { title: "Audio Only", resolution: "—", size: "12.43 MB", premium: false }
+    const downloadOptions: DownloadOption[] = [
+        { title: "Video / 144p", resolution: "256×144", premium: false, quality: "144p", type: "video" },
+        { title: "Video / 360p", resolution: "640×360", premium: false, quality: "360p", type: "video" },
+        { title: "Video / 720p", resolution: "1280×720", premium: true, quality: "720p", type: "video" },
+        { title: "Video / 1080p", resolution: "1920×1080", premium: true, quality: "1080p", type: "video" },
+        { title: "Video / 1080p", resolution: "1920×1080", premium: true, quality: "1080p", type: "video" },
+        { title: "Video / 1080p", resolution: "1920×1080", premium: true, quality: "1080p", type: "video" },
+        { title: "Audio Only", resolution: "—", premium: false, quality: "audio", type: "audio" }
     ];
 
     const handleDownload = () => {
-        const startTimeInSec = convertHHMMSSToSeconds(clippingWindow.startTime);
-        const endTimeInSec = convertHHMMSSToSeconds(clippingWindow.endTime);
+        const startTimeInSec = convertHHMMSSToSeconds(startTime);
+        const endTimeInSec = convertHHMMSSToSeconds(endTime);
 
         if (startTimeInSec > endTimeInSec) {
             alert("Start time cannot be greater than end time");
@@ -47,10 +66,13 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         }
 
 
-        console.log("Downloading clip:", { videoId, ...clippingWindow });
+        console.log("Downloading clip:", { videoId, startTime, endTime });
         setIsDownloadOpen(true);
     };
-
+    //First Time -> End time  = duration
+    useEffect(() => {
+        setEndTime(formatSecondsToHHMMSS(duration));
+    }, [])
     return (
         <div className="glass-card p-8 max-w-4xl w-full mx-auto space-y-6">
             {!isDownloadOpen ? (
@@ -76,11 +98,8 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                             <Input
                                 type="time"
                                 step="1"
-                                value={clippingWindow.startTime}
-                                onChange={(e) => setClippingWindow(prev => ({
-                                    ...prev,
-                                    startTime: e.target.value
-                                }))}
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
                                 min="00:00:00"
                                 max={formatSecondsToHHMMSS(duration)}
                                 className="bg-background/50"
@@ -92,11 +111,8 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                             <Input
                                 type="time"
                                 step="1"
-                                value={clippingWindow.endTime}
-                                onChange={(e) => setClippingWindow(prev => ({
-                                    ...prev,
-                                    endTime: e.target.value
-                                }))}
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
                                 min="00:00:00"
                                 max={formatSecondsToHHMMSS(duration)}
                                 className="bg-background/50"
@@ -119,10 +135,9 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     </div>
                     <div className="max-h-96 overflow-y-scroll overflow-x-hidden space-y-4">
                         {downloadOptions.map((data, index) => (
-                            <DownloadOption key={index} title={data.title} premium={data.premium} />
+                            <DownloadOption key={index} title={data.title} premium={data.premium} quality={data.quality} type={data.type} />
                         ))}
                     </div>
-
                 </>
             )}
         </div>

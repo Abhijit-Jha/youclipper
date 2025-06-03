@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+// import axios from "axios";
 
 interface UserProfileProps {
   imageUrl: string;
@@ -35,15 +35,15 @@ const UserProfile: React.FC<UserProfileProps> = ({
   size = 40,
 }) => {
   const [open, isOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
   const { data: session } = useSession(); // ✅ Correct place to use hook
   // let token = session?.accessToken;
   // console.log(token, "is from google");
 
-  useEffect(()=>{
-    token = session?.accessToken
-    console.log(session?.accessToken,"heeh");
-  },[session])
+  // useEffect(()=>{
+  //   // token = session?.accessToken
+  //   console.log(session?.accessToken,"heeh");
+  // },[session])
   return (
     <>
       <div

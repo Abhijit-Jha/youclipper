@@ -1,31 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
+import { extractVideoId } from "@/app/lib/utils/extractVideoId";
+import { useYoutubeURLStore } from "../contexts/videoContext";
 
 
 interface VideoInputProps {
-  onVideoSubmit: (videoId: string) => void;
+  onVideoSubmit: (youtubeVideoURL: string, videoId: string) => void;
 }
 
 export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
-  const [youtubeVideoURL, setYoutubeVideoURL] = useState("");
+
+  const { youtubeVideoURL, setYoutubeVideoURL } = useYoutubeURLStore();
+  const [buttonDisable, setButtonDisable] = useState(false);
   const [error, setError] = useState("");
 
-  const extractVideoId = (input: string): string | null => {
-    if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
-    const regex =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = input.match(regex);
-    return match ? match[1] : null;
-  };
+  useEffect(() => {
+    setButtonDisable(false);
+    setError("");
+  }, [youtubeVideoURL]);
 
   const handleSubmit = () => {
     const videoId = extractVideoId(youtubeVideoURL);
     if (videoId) {
       setError("");
-      onVideoSubmit(videoId);
+      setButtonDisable(true);
+      onVideoSubmit(youtubeVideoURL, videoId);
     } else {
       setError("❌ Invalid YouTube URL or Video ID");
     }
@@ -45,6 +47,7 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
         <Button
           onClick={handleSubmit}
           className="w-full"
+          disabled={buttonDisable}
         >
           Continue
         </Button>
