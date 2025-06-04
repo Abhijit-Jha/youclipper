@@ -47,7 +47,7 @@ export const handlers = NextAuth({
             isFreeTrailUsed: dbUser?.isFreeTrialUsed
           },
           process.env.NEXTAUTH_SECRET!,
-          { expiresIn: "1h" }
+          { expiresIn: "24h" }
         );
 
         console.log("Server token", customToken);

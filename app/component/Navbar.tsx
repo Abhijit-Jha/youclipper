@@ -9,12 +9,42 @@ import ContinueWithGoogleModal from "./ui/Modal";
 import { useSession } from "next-auth/react";
 import { stat } from "fs";
 import UserProfile from "./ui/UserProfile";
+import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
+import { combinedVideoPathStore, finalVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
+
+
+// import {
+//   useYoutubeURLStore,
+//   useVideoIDStore,
+//   useClippingWindowStore,
+//   useAspectRatioStore,
+//   useQualityStore,
+//   useTypeStore,
+// } from "@/app/contexts/videoContext";
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [IsLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { data: session, status } = useSession()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(status == 'authenticated');
+
+  // const videoEditorState = {
+  //   youtubeVideoURL: useYoutubeURLStore((state) => state.youtubeVideoURL),
+  //   videoID: useVideoIDStore((state) => state.videoID),
+  //   startTime: useClippingWindowStore((state) => state.startTime),
+  //   endTime: useClippingWindowStore((state) => state.endTime),
+  //   aspectRatio: useAspectRatioStore((state) => state.aspectRatio),
+  //   quality: useQualityStore((state) => state.quality),
+  //   type: useTypeStore((state) => state.type),
+  // };
+
+  const { trimCompleted } = useTrimJobStore();
+  const { downloadCompleted } = useDownloadJobStore();
+  const { combineCompleted } = useCombineJobStore();
+  const { trimmedVideoPath } = trimmedVideoPathStore();
+  const { combinedVideoPath } = combinedVideoPathStore();
+  const { finalVideoPath } = finalVideoPathStore();
+
   // const [token,setToken] = useState();
   useEffect(() => {
     const handleScroll = () => {
@@ -54,6 +84,10 @@ export const Navbar = () => {
             <span className="sm:text-4xl text-2xl font-bold font-handwritten">YouClipper</span>
           </Link>
           <div className="flex items-center gap-6">
+            {/* <div>
+              {JSON.stringify(videoEditorState)}
+            </div> */}
+            {JSON.stringify({ combineCompleted, trimCompleted, downloadCompleted, trimmedVideoPath, combinedVideoPath, finalVideoPath })}
             <Link
               href="/pricing"
               className="text-foreground/90 hover:text-primary transition-colors"

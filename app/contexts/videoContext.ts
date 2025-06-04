@@ -17,15 +17,15 @@ export const useYoutubeURLStore = create<YoutubeURLStore>((set) => ({
 
 //videoId
 interface VideoIDStore {
-    videoID: string;
+    videoId: string;
     setVideoID: (videoId: string) => void;
     clearVideoID: () => void;
 }
 
 export const useVideoIDStore = create<VideoIDStore>((set) => ({
-    videoID: "",
-    setVideoID: (videoId) => set({ videoID: videoId }),
-    clearVideoID: () => set({ videoID: "" }),
+    videoId: "",
+    setVideoID: (videoId) => set({ videoId: videoId }),
+    clearVideoID: () => set({ videoId: "" }),
 }));
 
 // start and end time

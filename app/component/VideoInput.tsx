@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
 import { extractVideoId } from "@/app/lib/utils/extractVideoId";
-import { useYoutubeURLStore } from "../contexts/videoContext";
+import { useVideoIDStore, useYoutubeURLStore } from "../contexts/videoContext";
+import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
+import { combinedVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
 
 
 interface VideoInputProps {
@@ -14,6 +16,12 @@ interface VideoInputProps {
 export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
 
   const { youtubeVideoURL, setYoutubeVideoURL } = useYoutubeURLStore();
+  const { setDownloadCompleted } = useDownloadJobStore();
+  const { setCombineCompleted } = useCombineJobStore();
+  const { setTrimCompleted } = useTrimJobStore();
+  const { setTrimmedVideoPath } = trimmedVideoPathStore();
+  const { setCombinedVideoPath } = combinedVideoPathStore();
+  const { setVideoID } = useVideoIDStore();
   const [buttonDisable, setButtonDisable] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,6 +32,7 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
 
   const handleSubmit = () => {
     const videoId = extractVideoId(youtubeVideoURL);
+    setVideoID(videoId); //Video id for lter user
     if (videoId) {
       setError("");
       setButtonDisable(true);
@@ -40,7 +49,15 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
         <Input
           placeholder="Paste YouTube URL or video ID"
           value={youtubeVideoURL}
-          onChange={(e) => setYoutubeVideoURL(e.target.value)}
+          onChange={(e) => {
+            //whenever the download link changes downloadVideoCompleted becomes false
+            setDownloadCompleted(false); //Url changed so we have to download the new video again
+            setCombineCompleted(false);
+            setTrimCompleted(false);
+            setYoutubeVideoURL(e.target.value);
+            setTrimmedVideoPath("");
+            setCombinedVideoPath("");
+          }}
           className="bg-background/50"
         />
         {error && <p className="text-destructive text-sm">{error}</p>}
