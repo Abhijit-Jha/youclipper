@@ -13,8 +13,11 @@ import { combinedVideoPathStore, finalVideoPathStore, trimmedVideoPathStore } fr
 import { useSession } from "next-auth/react";
 import { useCombineJobStore, useDownloadJobStore, useQualityJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { getJobStatus } from "../lib/controller/polling";
-import { retryQualityDownloadStore } from "../contexts/extra";
+import { downloadClickedStore, downloadURLStore, retryQualityDownloadStore, useStepsStore } from "../contexts/extra";
 import { adjustVideoQuality } from "../lib/controller/adjustQuality";
+import { getFileDownloadUrl } from "../lib/storage/downloadFile";
+import { MultiStepLoader } from "@/components/ui/multi-step-loader";
+import { useRouter } from "next/navigation";
 
 interface VideoClipperProps {
     videoId: string;
@@ -47,6 +50,11 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     const { downloadCompleted } = useDownloadJobStore();
     const { trimJobId, setTrimJobId, trimCompleted, setTrimCompleted } = useTrimJobStore();
     const token = session?.accessToken;
+    const { setStep } = useStepsStore();
+    const [isTrimming, setIsTrimming] = useState(false);
+    const { downloadClicked } = downloadClickedStore();
+    const { stepNo } = useStepsStore();
+    const router = useRouter();
 
     const downloadOptions: DownloadOption[] = [
         { title: "Video / 144p", resolution: "256×144", premium: false, quality: "144p", type: "video" },
@@ -56,11 +64,36 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         { title: "Audio", resolution: "—", premium: false, quality: "audio", type: "audio" },
     ];
 
+
+    const loadingStates = [
+        { text: "Preparing everything for you..." },
+        { text: "Downloading high-quality video and audio 🎥🔊" },
+        { text: "Merging audio and video into one seamless file 🎬" },
+        { text: "Trimming the video to your selected timeframe ✂️" },
+        { text: "Optimizing video resolution for the best performance ⚙️" },
+        { text: "Finalizing everything — hang tight ⏳" },
+        { text: "All set! Your download will begin shortly ⬇️" },
+    ];
+
     const [retryAttempts, setRetryAttempts] = useState(0);
     const { qualityJobId, qualityCompleted, setQualityCompleted, setQualityJobId } = useQualityJobStore();
     const { finalVideoPath, setFinalVideoPath } = finalVideoPathStore();
     const { quality } = useQualityStore()
     const { retryDownload, setRetryDownload } = retryQualityDownloadStore();
+    const { downloadURL, setDownloadURL } = downloadURLStore()
+
+    useEffect(() => {
+        if (!downloadURL) return;
+
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = `${videoId}-${aspectRatio}-${quality}`; // set filename here
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setStep(7);
+        console.log("⬇️ Download started from:", downloadURL);
+    }, [downloadURL]);
 
     useEffect(() => {
         if (!retryDownload || qualityCompleted || !trimmedVideoPath) return;
@@ -96,6 +129,10 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                 const data = await getJobStatus("quality", qualityJobId, token);
                 console.log("Your data is ", data);
                 if (data.state === 'completed') {
+                    setStep(5); //4.quality job done -> 5. TP
+                    const url = getFileDownloadUrl(data.progress.fileId);
+                    setDownloadURL(url);
+                    setStep(6);
                     setQualityCompleted(true);
                     clearInterval(timer);
                     console.log("✅ Quality job completed:", data);
@@ -149,6 +186,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                 const data = await getJobStatus("trim", trimJobId, token);
 
                 if (data.state === 'completed') {
+                    setStep(4); //3. Trimming completed -> 4. Adjusting the quality
                     setTrimCompleted(true);
                     clearInterval(timer); // stop polling
                     // trimmed Path -> store
@@ -170,6 +208,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     }, [token, trimJobId, retry, trimCompleted, combinedVideoPath, downloadCompleted, combineCompleted,]);
 
     const handleDownload = async () => {
+        setIsTrimming(true); // show loader
         const startTimeInSec = convertHHMMSSToSeconds(startTime);
         const endTimeInSec = convertHHMMSSToSeconds(endTime);
 
@@ -223,8 +262,12 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         setEndTime(formatSecondsToHHMMSS(duration));
     }, [duration, setEndTime]);
 
+    useEffect(() => {
+        if (stepNo == 7) setTimeout(() => router.push('/'), 2000);
+    }, [stepNo])
+
     return (
-        <div className="glass-card p-8 max-w-4xl w-full mx-auto space-y-6">
+        <div className={`${!downloadClicked ? "glass-card" : ""}  p-8 max-w-4xl w-full mx-auto space-y-6 `}>
             {!isDownloadOpen ? (
                 <>
                     <div className="flex items-center justify-between mb-4">
@@ -282,28 +325,46 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     </div>
 
                     <div className="flex justify-end pt-4">
-                        <Button onClick={handleDownload}>Trim the Clip</Button>
+                        <Button onClick={handleDownload} disabled={isTrimming}>
+                            {isTrimming ? (
+                                <div className="flex items-center gap-2">
+                                    <span className="loader border-t-transparent border-white animate-spin w-4 h-4 border-2 rounded-full" />
+                                    Processing...
+                                </div>
+                            ) : (
+                                "Trim the Clip"
+                            )}
+                        </Button>
+
                     </div>
                 </>
             ) : (
                 <>
-                    <div className="flex items-center justify-between mb-4">
+                    {!downloadClicked && <div className="flex items-center justify-between mb-4">
                         <ArrowLeft className="cursor-pointer" onClick={() => setIsDownloadOpen(false)} />
                         <h2 className="md:text-2xl text-xl font-bold">Download</h2>
                         <div style={{ width: "" }}></div>
-                    </div>
+                    </div>}
 
-                    <div className="max-h-96 overflow-y-scroll overflow-x-hidden space-y-4">
-                        {downloadOptions.map((data, index) => (
-                            <DownloadOption
-                                key={index}
-                                title={data.title}
-                                premium={data.premium}
-                                quality={data.quality}
-                                type={data.type}
-                            />
-                        ))}
-                    </div>
+                    {!downloadClicked ? (
+                        <div className="max-h-96 overflow-y-scroll overflow-x-hidden space-y-4">
+                            {downloadOptions.map((data, index) => (
+                                <DownloadOption
+                                    key={index}
+                                    title={data.title}
+                                    premium={data.premium}
+                                    quality={data.quality}
+                                    type={data.type}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex  justify-center  min-h-[350px]">
+                            <MultiStepLoader loadingStates={loadingStates} loading={true} step={stepNo} />
+                        </div>
+
+                    )}
+
                 </>
             )}
         </div>

@@ -7,14 +7,13 @@ import { extractVideoId } from "@/app/lib/utils/extractVideoId";
 import { useVideoIDStore, useYoutubeURLStore } from "../contexts/videoContext";
 import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { combinedVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
-
+import { Loader2 } from "lucide-react"; // Spinner icon
 
 interface VideoInputProps {
   onVideoSubmit: (youtubeVideoURL: string, videoId: string) => void;
 }
 
 export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
-
   const { youtubeVideoURL, setYoutubeVideoURL } = useYoutubeURLStore();
   const { setDownloadCompleted } = useDownloadJobStore();
   const { setCombineCompleted } = useCombineJobStore();
@@ -22,23 +21,28 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
   const { setTrimmedVideoPath } = trimmedVideoPathStore();
   const { setCombinedVideoPath } = combinedVideoPathStore();
   const { setVideoID } = useVideoIDStore();
+
   const [buttonDisable, setButtonDisable] = useState(false);
   const [error, setError] = useState("");
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   useEffect(() => {
     setButtonDisable(false);
     setError("");
+    setButtonClicked(false);
   }, [youtubeVideoURL]);
 
   const handleSubmit = () => {
+    setButtonClicked(true);
     const videoId = extractVideoId(youtubeVideoURL);
-    setVideoID(videoId); //Video id for lter user
+    setVideoID(videoId);
     if (videoId) {
       setError("");
       setButtonDisable(true);
       onVideoSubmit(youtubeVideoURL, videoId);
     } else {
       setError("❌ Invalid YouTube URL or Video ID");
+      setButtonClicked(false);
     }
   };
 
@@ -50,8 +54,7 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
           placeholder="Paste YouTube URL or video ID"
           value={youtubeVideoURL}
           onChange={(e) => {
-            //whenever the download link changes downloadVideoCompleted becomes false
-            setDownloadCompleted(false); //Url changed so we have to download the new video again
+            setDownloadCompleted(false);
             setCombineCompleted(false);
             setTrimCompleted(false);
             setYoutubeVideoURL(e.target.value);
@@ -59,14 +62,18 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
             setCombinedVideoPath("");
           }}
           className="bg-background/50"
+          disabled={buttonClicked}
         />
         {error && <p className="text-destructive text-sm">{error}</p>}
         <Button
           onClick={handleSubmit}
-          className="w-full"
-          disabled={buttonDisable}
+          className="w-full flex items-center justify-center"
+          disabled={buttonDisable || buttonClicked}
         >
-          Continue
+          {buttonClicked ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : null}
+          {buttonClicked ? "Processing..." : "Continue"}
         </Button>
       </div>
     </div>

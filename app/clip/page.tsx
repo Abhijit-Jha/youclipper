@@ -10,16 +10,23 @@ import { useEffect } from "react";
 import { startDownload } from "../lib/controller/startDownload";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useCombineJobStore, useDownloadJobStore } from "../contexts/jobIdContext";
+import { useCombineJobStore, useDownloadJobStore, useQualityJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { getJobStatus } from "../lib/controller/polling";
 import { combinedVideoPathStore } from "../contexts/pathContext";
+import MultistepLoader from "../component/ui/MultistepLoader";
+import { useQueueStatusStore, useStepsStore } from "../contexts/extra";
+import { trackQueue } from "../lib/controller/trackQueue";
 
 
 export default function ClipPage() {
     const { downloadJobId, downloadCompleted, setDownloadCompleted, setDownloadJobId } = useDownloadJobStore();
     const { combineCompleted, setCombineCompleted } = useCombineJobStore();
+    const { trimCompleted } = useTrimJobStore();
+    const { qualityCompleted } = useQualityJobStore();
+    const { qualityJobId } = useQualityJobStore();
     const { setCombinedVideoPath } = combinedVideoPathStore()
     const [videoId, setVideoId] = useState<string | null>(null);
+    const { setQueueStatus } = useQueueStatusStore();
     const router = useRouter()
     const [videoDetails, setVideoDetails] = useState<{
         duration: number;
@@ -28,6 +35,17 @@ export default function ClipPage() {
     const isPremiumUser = session?.user.isPremium;
     const isFreeTrialUsed = session?.user.isFreeTrialUsed ?? true;
     const token = session?.accessToken;
+    const { stepNo, setStep } = useStepsStore();
+    console.log("Currenlty on step NO", stepNo);
+
+    useEffect(() => {
+        trackQueue(downloadJobId, qualityJobId, token).then(
+            ({ currentWaitingJobs, statusOfYourJob }) => {
+                setQueueStatus(currentWaitingJobs, statusOfYourJob);
+            }
+        );
+    }, [downloadCompleted, combineCompleted, qualityCompleted])
+
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/");
@@ -51,6 +69,7 @@ export default function ClipPage() {
                 if (data.state === 'completed') {
                     setDownloadCompleted(true);
                     clearInterval(timer); // stop polling
+                    setStep(2); //Download Completed -> so step 1 completed step 2 is combining
                     //store the video and audio path to combine ->No need because backend handle this 
                     console.log("Download completed:", data);
                 } else if (data.state === 'failed') {
@@ -70,7 +89,7 @@ export default function ClipPage() {
     }, [downloadJobId, token, downloadCompleted]);
 
     //To poll for the combineProgress
-    
+
     useEffect(() => {
         // Downloading is not done so we will not check for combine progress
         if (!downloadCompleted) return;
@@ -88,6 +107,7 @@ export default function ClipPage() {
                     //Store the combined output path for trimming
                     console.log(data.progress.outputPath)
                     setCombinedVideoPath(data.progress.outputPath);
+                    setStep(3); //stepp 2 Combining combpleted -> step 3 : Trimming starts
                     console.log("Combine completed:", data);
                 } else if (data.state === 'failed') {
                     console.log("Combine failed:", data);
@@ -95,11 +115,11 @@ export default function ClipPage() {
                 }
             } catch (error) {
                 console.error("Error while polling combine status:", error);
-                //LATER CALL :decide to clearInterval here or continue retrying
+                //LATER CALL : decide to clearInterval here or continue retrying
             }
         }, 5000);
 
-        return () => clearInterval(timer); 
+        return () => clearInterval(timer);
     }, [downloadCompleted, downloadJobId, token]);
 
     const handleVideoSubmit = async (youtubeVideoURL: string, videoId: string) => {
