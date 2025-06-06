@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import dotenv from "dotenv";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
@@ -6,9 +6,10 @@ import clientPromise from "../lib/db/MongoClient";
 import User from "../lib/db/Schema";
 import { connectToDB } from "../lib/db/connectToDb";
 import jwt from "jsonwebtoken";
+
 dotenv.config();
 
-export const handlers = NextAuth({
+export const authOptions: AuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
@@ -34,34 +35,29 @@ export const handlers = NextAuth({
       return true;
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         await connectToDB();
         const dbUser = await User.findOne({ email: user.email });
         const customToken = jwt.sign(
           {
-            id: (dbUser?._id as string).toString(),
+            id: dbUser?._id.toString(),
             name: dbUser?.name,
             email: dbUser?.email,
             isPremium: dbUser?.isPremium,
-            isFreeTrailUsed: dbUser?.isFreeTrialUsed
+            isFreeTrailUsed: dbUser?.isFreeTrialUsed,
           },
           process.env.NEXTAUTH_SECRET!,
           { expiresIn: "24h" }
         );
 
-        console.log("Server token", customToken);
-
-        token.accessToken = customToken; //Used by nodejs backend
-        token.id = dbUser?._id?.toString();
+        token.accessToken = customToken;
+        token.id = dbUser?._id.toString();
         token.isPremium = dbUser?.isPremium ?? false;
-        token.isFreeTrialUsed = dbUser?.isFreeTrialUsed ?? true; //Keep an eye on it
-
+        token.isFreeTrialUsed = dbUser?.isFreeTrialUsed ?? true;
       }
       return token;
     },
-
-
 
     async session({ session, token }) {
       if (session.user) {
@@ -72,7 +68,7 @@ export const handlers = NextAuth({
       }
       return session;
     },
-
   },
+};
 
-});
+export const handlers = NextAuth(authOptions);

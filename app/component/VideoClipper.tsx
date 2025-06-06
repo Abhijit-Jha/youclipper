@@ -7,7 +7,7 @@ import { Button } from "./ui/Button";
 import { AspectRatioSelector } from "./ui/DropDown";
 import DownloadOption from "./ui/DownloadOption";
 import { ArrowLeft } from "lucide-react";
-import { useAspectRatioStore, useClippingWindowStore, useQualityStore } from "../contexts/videoContext";
+import { useAspectRatioStore, useClippingWindowStore, useQualityStore, useVideoIDStore, useYoutubeURLStore } from "../contexts/videoContext";
 import { trimVideo } from "../lib/controller/trimVideo";
 import { combinedVideoPathStore, finalVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
 import { useSession } from "next-auth/react";
@@ -18,6 +18,10 @@ import { adjustVideoQuality } from "../lib/controller/adjustQuality";
 import { getFileDownloadUrl } from "../lib/storage/downloadFile";
 import { MultiStepLoader } from "@/components/ui/multi-step-loader";
 import { useRouter } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
+import TrimOptions from "./ui/TrimOptions";
+import { freeTrialUsed } from "../lib/controller/setTrialUsed";
 
 interface VideoClipperProps {
     videoId: string;
@@ -44,10 +48,11 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     const [retry, setRetry] = useState<boolean>(false);
     const [clipType, setClipType] = useState("Fullscreen");
     const [isDownloadOpen, setIsDownloadOpen] = useState(false);
-    const { combinedVideoPath } = combinedVideoPathStore();
+    const { combinedVideoPath, setCombinedVideoPath } = combinedVideoPathStore();
     const { trimmedVideoPath, setTrimmedVideoPath } = trimmedVideoPathStore();
     const { data: session } = useSession();
-    const { downloadCompleted } = useDownloadJobStore();
+    const { setCombineCompleted } = useCombineJobStore();
+    const { downloadCompleted, setDownloadCompleted } = useDownloadJobStore();
     const { trimJobId, setTrimJobId, trimCompleted, setTrimCompleted } = useTrimJobStore();
     const token = session?.accessToken;
     const { setStep } = useStepsStore();
@@ -80,7 +85,9 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     const { finalVideoPath, setFinalVideoPath } = finalVideoPathStore();
     const { quality } = useQualityStore()
     const { retryDownload, setRetryDownload } = retryQualityDownloadStore();
-    const { downloadURL, setDownloadURL } = downloadURLStore()
+    const { downloadURL, setDownloadURL } = downloadURLStore();
+    const { setYoutubeVideoURL } = useYoutubeURLStore();
+    const { setVideoID } = useVideoIDStore()
 
     useEffect(() => {
         if (!downloadURL) return;
@@ -108,6 +115,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     resolution: quality,
                     token: session?.accessToken,
                 });
+                await freeTrialUsed();
 
                 const jobID = data.jobId;
                 setQualityJobId(jobID);
@@ -135,6 +143,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     setStep(6);
                     setQualityCompleted(true);
                     clearInterval(timer);
+                    await freeTrialUsed();
                     console.log("✅ Quality job completed:", data);
                     setFinalVideoPath(data.progress.finalVideoPath);
                 } else if (data.state === 'failed') {
@@ -208,35 +217,38 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     }, [token, trimJobId, retry, trimCompleted, combinedVideoPath, downloadCompleted, combineCompleted,]);
 
     const handleDownload = async () => {
-        setIsTrimming(true); // show loader
         const startTimeInSec = convertHHMMSSToSeconds(startTime);
         const endTimeInSec = convertHHMMSSToSeconds(endTime);
-
+        if (!startTime || !endTime) {
+            toast("Check the Time before Trimming");
+            return;
+        }
         if (startTimeInSec > endTimeInSec) {
-            alert("Start time cannot be greater than end time");
+            toast("Start time cannot be greater than end time");
             return;
         }
 
         if (endTimeInSec - startTimeInSec < 15) {
-            alert("Clip must be at least 15 seconds long");
+            toast("Clip must be at least 15 seconds long");
             return;
         }
 
         // If end time exceeds total duration of video
         if (endTimeInSec > duration) {
-            alert("End time cannot be greater than video duration");
+            toast("End time cannot be greater than video duration");
             return;
         }
 
         // If start time is less than 0
         if (startTimeInSec < 0) {
-            alert("Start time cannot be negative");
+            toast("Start time cannot be negative");
             return;
         }
 
         //Here we have to first check weather the combine process is done or not
         //Then send request for 
 
+        setIsTrimming(true); // show loader
         //First check if the combined step  is done or not
         if (!combineCompleted || !combinedVideoPath) {
             // retry after 5 sec
@@ -255,6 +267,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
 
         console.log("Trimming clip:", { videoId, startTime, endTime });
         setIsDownloadOpen(true);
+        setIsTrimming(false);
     };
 
     //First Time -> End time  = duration
@@ -262,12 +275,65 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         setEndTime(formatSecondsToHHMMSS(duration));
     }, [duration, setEndTime]);
 
+    const [countdown, setCountdown] = useState(3);
+
     useEffect(() => {
-        if (stepNo == 7) setTimeout(() => router.push('/'), 2000);
-    }, [stepNo])
+        if (stepNo === 7 && downloadURL) {
+            const ToastContent = () => {
+                const [secondsLeft, setSecondsLeft] = useState(countdown);
+
+                useEffect(() => {
+                    if (secondsLeft === 0) return;
+                    const timer = setTimeout(() => {
+                        setSecondsLeft(secondsLeft - 1);
+                    }, 1000);
+                    return () => clearTimeout(timer);
+                }, [secondsLeft]);
+
+                return (
+                    <div>
+                        Your Video has been downloaded.<br />
+                        If not, click this link:{" "}
+                        <a
+                            href={downloadURL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline text-blue-400"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Download Video
+                        </a>
+                        <br />
+                        Redirecting you to / in {secondsLeft} sec...
+                    </div>
+                );
+            };
+
+            toast(<ToastContent />);
+
+            // Reset everything
+            setDownloadCompleted(false);
+            setTrimCompleted(false);
+            setCombinedVideoPath("");
+            setTrimmedVideoPath("");
+            setQualityCompleted(false);
+            setFinalVideoPath("");
+            setDownloadURL("");
+            setVideoID("");
+            setYoutubeVideoURL("");
+            setAspectRatio("fullscreen");
+
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                setStep(0);
+                router.push("/");
+            }, 3000);
+        }
+    }, [stepNo, downloadURL]);
 
     return (
         <div className={`${!downloadClicked ? "glass-card" : ""}  p-8 max-w-4xl w-full mx-auto space-y-6 `}>
+
             {!isDownloadOpen ? (
                 <>
                     <div className="flex items-center justify-between mb-4">
@@ -286,43 +352,9 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Start Time</label>
-                            <Input
-                                type="time"
-                                step="1"
-                                value={startTime}
-                                onChange={(e) => {
-                                    setTrimCompleted(false); //startTime changed so wapas trim krna pdega
-                                    setStartTime(e.target.value);
-                                    setTrimmedVideoPath("");
-                                }}
-                                min="00:00:00"
-                                max={formatSecondsToHHMMSS(duration)}
-                                className="bg-background/50"
-                            />
-                        </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">End Time</label>
-                            <Input
-                                type="time"
-                                step="1"
-                                value={endTime}
-                                onChange={(e) => {
-                                    setEndTime(e.target.value)
-                                    setTrimCompleted(false); //endTime changed so wapas trim krna pdega
-                                    setTrimmedVideoPath("");
-                                }}
-                                min="00:00:00"
-                                max={formatSecondsToHHMMSS(duration)}
-                                className="bg-background/50"
-                            />
-                        </div>
+                    <TrimOptions duration={duration} />
 
-                        <AspectRatioSelector value={aspectRatio} onChange={setAspectRatio} />
-                    </div>
 
                     <div className="flex justify-end pt-4">
                         <Button onClick={handleDownload} disabled={isTrimming}>

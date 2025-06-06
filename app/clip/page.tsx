@@ -5,7 +5,6 @@ import { getVideoDetails } from "../lib/controller/fetchVideoDetails";
 import { parseISODurationToSeconds } from "../lib/utils/handleTimeUnits";
 import { VideoInput } from "../component/VideoInput";
 import { VideoClipper } from "../component/VideoClipper";
-import axios from "axios";
 import { useEffect } from "react";
 import { startDownload } from "../lib/controller/startDownload";
 import { useSession } from "next-auth/react";
@@ -13,15 +12,15 @@ import { useRouter } from "next/navigation";
 import { useCombineJobStore, useDownloadJobStore, useQualityJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { getJobStatus } from "../lib/controller/polling";
 import { combinedVideoPathStore } from "../contexts/pathContext";
-import MultistepLoader from "../component/ui/MultistepLoader";
 import { useQueueStatusStore, useStepsStore } from "../contexts/extra";
 import { trackQueue } from "../lib/controller/trackQueue";
+import { toast, Toaster } from "sonner";
+import { getFreeTrialStatus } from "../lib/controller/getFreeTrailStatus";
 
 
 export default function ClipPage() {
     const { downloadJobId, downloadCompleted, setDownloadCompleted, setDownloadJobId } = useDownloadJobStore();
     const { combineCompleted, setCombineCompleted } = useCombineJobStore();
-    const { trimCompleted } = useTrimJobStore();
     const { qualityCompleted } = useQualityJobStore();
     const { qualityJobId } = useQualityJobStore();
     const { setCombinedVideoPath } = combinedVideoPathStore()
@@ -32,8 +31,6 @@ export default function ClipPage() {
         duration: number;
     } | null>(null);
     const { data: session, status } = useSession();
-    const isPremiumUser = session?.user.isPremium;
-    const isFreeTrialUsed = session?.user.isFreeTrialUsed ?? true;
     const token = session?.accessToken;
     const { stepNo, setStep } = useStepsStore();
     console.log("Currenlty on step NO", stepNo);
@@ -44,7 +41,7 @@ export default function ClipPage() {
                 setQueueStatus(currentWaitingJobs, statusOfYourJob);
             }
         );
-    }, [downloadCompleted, combineCompleted, qualityCompleted])
+    }, [downloadCompleted, combineCompleted, qualityCompleted]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -136,23 +133,38 @@ export default function ClipPage() {
             // start the download but check if they have trial or not
             // if the user is not a premium user and the free trial is also used no calls to the backend
             // only if the user is premuim and freeTrial is not used then only call the backend
-            if (isPremiumUser || !isFreeTrialUsed) {
+
+            //We will get these details from db and not from session as we are using JWT
+            const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
+            if (isPremium || !isFreeTrialUsed) {
                 const data = await startDownload(youtubeVideoURL, token);
-                const jobId = data.jobId //To poll for the status
+
+                if (data.success === false) {
+                    // ❌ Backend error or server is down
+                    console.error("Download failed:", data.message);
+                    toast(data.message); //TODO: You can replace this with a toast
+                    setTimeout(() => router.push("/"), 1000);
+                    return;
+                }
+
+                const jobId = data.jobId;
                 setDownloadJobId(jobId);
-                console.log("Job is scheduled ", jobId)
+                console.log("✅ Job is scheduled:", jobId);
             } else {
-                console.log("No trials left!!! So No reqiests will be sent");
+                console.log("❌ No trials left! No requests will be sent.");
             }
+
 
         } catch (error) {
             console.error("Failed to fetch video details:", error);
-            alert("Failed to fetch video details. Please try again.");
+            toast("Failed to fetch video details. Check the URL/videoID again.");
+            window.location.reload(); //only sol i can figure out for now
         }
     };
 
     return (
         <div className="relative z-10 container mx-auto px-4 py-16">
+            <Toaster />
             {!videoId || !videoDetails ? (
                 <div className="flex  h-fit items-center mt-20">
                     <VideoInput onVideoSubmit={handleVideoSubmit} />

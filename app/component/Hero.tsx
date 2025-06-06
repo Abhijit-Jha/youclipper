@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Github } from "lucide-react";
+import { Github, Loader2 } from "lucide-react";
 import { TypewriterEffect } from "./ui/type-writter-effect";
 import { Button } from "./ui/Button";
 import SignUpModal from "./ui/Modal";
@@ -15,6 +15,7 @@ export const HeroSection = () => {
   const [IsLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { data: session, status } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, isLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -60,21 +61,34 @@ export const HeroSection = () => {
           <Button
             className="bg-primary hover:bg-primary/80 text-background font-medium text-lg px-8 py-6"
             onClick={() => {
+              isLoading(true);
               if (isAuthenticated) {
                 router.push('/clip');
-              } else setIsLoginModalOpen(true)
+                isLoading(false);
+              } else {
+                setIsLoginModalOpen(true);
+                isLoading(false);
+              }
             }}
           >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5" />
+              </>
+            ) : (
+              ""
+            )}
             Get Started
           </Button>
           <Button
             variant="outline"
             className="border-primary/30 hover:border-primary/60 text-foreground/90 font-medium text-lg px-8 py-6"
+            onClick={() => window.open('https://github.com/Abhijit-Jha/youclipper', '_blank')}
           >
-            <Github className="mr-2 h-5 w-5" onClick={() => window.open('https://github.com/Abhijit-Jha/youclipper', '_blank')} />
-            {/* https://github.com/Abhijit-Jha/youclipper */}
+            <Github className="mr-2 h-5 w-5" />
             Star on GitHub
           </Button>
+
         </motion.div>
       </motion.div>
       <div className="">

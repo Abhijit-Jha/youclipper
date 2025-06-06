@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button } from "./Button";
 import { Download, Star } from "lucide-react";
 import { useAspectRatioStore, useQualityStore, useTypeStore, useVideoIDStore } from "@/app/contexts/videoContext";
@@ -6,9 +6,10 @@ import { useSession } from "next-auth/react";
 import { adjustVideoQuality } from "@/app/lib/controller/adjustQuality";
 import { trimmedVideoPathStore } from "@/app/contexts/pathContext";
 import { useQualityJobStore } from "@/app/contexts/jobIdContext";
-import { downloadClickedStore, retryQualityDownloadStore, useStepsStore } from "@/app/contexts/extra";
-import { MultiStepLoader } from "@/components/ui/multi-step-loader";
+import { downloadClickedStore, retryQualityDownloadStore } from "@/app/contexts/extra";
 import { useRouter } from "next/navigation";
+import { freeTrialUsed } from "@/app/lib/controller/setTrialUsed";
+import { getFreeTrialStatus } from "@/app/lib/controller/getFreeTrailStatus";
 
 type DownloadType = "audio" | "video";
 type VideoQuality = '360p' | '720p' | '1080p' | '144p' | 'audio';
@@ -32,8 +33,9 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
     const router = useRouter();
     let token = session?.accessToken;
     const { downloadClicked, setDownloadClicked } = downloadClickedStore()
-    async function handleAdjustingQuality() {
-        const canDownload = session?.user.isPremium || !session?.user.isFreeTrialUsed;
+    const handleAdjustingQuality = useCallback(async () => {
+        const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
+        const canDownload = isPremium || !isFreeTrialUsed;
         if (!canDownload) {
             router.push('/pricing');
             return;
@@ -44,6 +46,7 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
         setDownloadClicked(true);
         if (!trimmedVideoPath || !videoId || !token) {
             console.log("Will retry once path is there");
+            setDownloadClicked(true);
             setRetryDownload(true);
             return;
         }
@@ -54,11 +57,28 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
             setQualityJobId(jobID);
             console.log('Setting quality', { title, quality, aspectRatio, trimmedVideoPath });
             setDownloadClicked(false);
+            await freeTrialUsed();
         } catch (error: any) {
             console.error("Error while adjusting video quality:", error?.response?.data?.message || error.message || error);
             setDownloadClicked(false);
         }
-    }
+    }, [
+        aspectRatio,
+        freeTrialUsed,
+        getFreeTrialStatus,
+        quality,
+        setQuality,
+        setQualityCompleted,
+        setQualityJobId,
+        setRetryDownload,
+        setDownloadClicked,
+        session?.accessToken,
+        type,
+        trimmedVideoPath,
+        videoId,
+        title,
+        router,
+    ]);
 
     return (
         <>

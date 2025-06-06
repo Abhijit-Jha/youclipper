@@ -1,9 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-// import axios from "axios";
+import { signOut } from "next-auth/react";
 
 interface UserProfileProps {
   imageUrl: string;
@@ -11,47 +9,42 @@ interface UserProfileProps {
   uname: string;
 }
 
-// Fix: make this a normal function that receives token
-// async function getUserDetails(token: string) {
-//   if (!token) return console.error("No token found");
-//   console.log("Token is",token);
-
-//   try {
-//     const response = await axios.get("http://localhost:3001/api/video/test", {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     console.log("HEY",response.data);
-//   } catch (error) {
-//     console.error("Error fetching user details:", error);
-//   }
-// }
-
 const UserProfile: React.FC<UserProfileProps> = ({
   imageUrl,
   uname,
   size = 40,
 }) => {
-  const [open, isOpen] = useState(false);
-  // const router = useRouter();
-  const { data: session } = useSession(); // ✅ Correct place to use hook
-  // let token = session?.accessToken;
-  // console.log(token, "is from google");
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  // useEffect(()=>{
-  //   // token = session?.accessToken
-  //   console.log(session?.accessToken,"heeh");
-  // },[session])
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
   return (
-    <>
+    <div ref={ref} className="relative inline-block">
       <div
         className="inline-block rounded-full overflow-hidden border-2 border-primary cursor-pointer hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
         style={{ width: size, height: size }}
         aria-label={uname}
         title={uname}
-        onClick={() => isOpen(!open)}
+        onClick={() => setOpen(!open)}
       >
         <Image
           src={imageUrl || "/default-avatar.png"}
@@ -70,17 +63,6 @@ const UserProfile: React.FC<UserProfileProps> = ({
           </div>
           <ul className="flex flex-col">
             <li>
-              <div
-                className="block px-4 py-2 text-foreground hover:bg-primary/10 transition-colors"
-                onClick={async () => {
-                  console.log("Div clicked");
-                  // if (token) await getUserDetails(token);
-                }}
-              >
-                Support
-              </div>
-            </li>
-            <li>
               <button
                 onClick={() => {
                   signOut({ callbackUrl: "/" });
@@ -93,7 +75,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
           </ul>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

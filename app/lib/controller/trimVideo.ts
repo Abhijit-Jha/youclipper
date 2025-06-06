@@ -1,6 +1,7 @@
 // http://localhost:3000/api/video/trim?startTime=00:00:00&endTime=00:00:25
 import axios from "axios";
 import { api } from "../apiCalls";
+import { toast } from "sonner";
 
 const BASE_URL = "http://localhost:3001/";
 
@@ -39,7 +40,7 @@ export async function trimVideo(
         return response.data;
     } catch (error: any) {
         console.error("Error trimming video: ", error?.response?.data || error.message);
-        alert("Failed to start trimming. Please try again.");
+        toast("Failed to start trimming. Please try again.");
         return null;
     }
 }
