@@ -1,15 +1,9 @@
-import axios, { AxiosResponse } from "axios";
-import { JWT } from "next-auth/jwt";
-
-const BASE_URL = 'http://localhost:3001/';
-
-interface AdjustVideoQualityParams {
-    trimmedVideoPath: string;
-    videoId: string;
-    aspectRatio: string;
-    resolution: string;
-    token: JWT;
-}
+import { AdjustVideoQualityParams } from "@/types/api";
+import axios from "axios";
+import dotenv from "dotenv"
+import { api } from "../apiCalls";
+dotenv.config()
+const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 
 
 export async function adjustVideoQuality({
@@ -19,8 +13,8 @@ export async function adjustVideoQuality({
     resolution,
     token,
 }: AdjustVideoQualityParams) {
-    console.log({resolution,aspectRatio})
-    const url = `${BASE_URL}api/video/quality?resolution=${resolution}&aspectRatio=${aspectRatio}`;
+    console.log({ resolution, aspectRatio })
+    const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${api['quality']}?resolution=${resolution}&aspectRatio=${aspectRatio}`;
     const body = {
         trimmedVideoPath,
         videoId,

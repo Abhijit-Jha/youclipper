@@ -1,19 +1,21 @@
 "use client";
 
+import { useAspectRatioStore } from "@/app/contexts/videoContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AspectRatioOption, AspectRatioSelectorProps } from "@/types/video";
 
-export type AspectRatioOption = "fullscreen" | "reels" | "squared";
 
-interface AspectRatioSelectorProps {
-  value: AspectRatioOption;
-  onChange: (value: AspectRatioOption) => void;
-}
+export const AspectRatioSelector = ({ value }: AspectRatioSelectorProps) => {
 
-export const AspectRatioSelector = ({ value, onChange }: AspectRatioSelectorProps) => {
+  const { setAspectRatio } = useAspectRatioStore()
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">Aspect Ratio</label>
-      <Select value={value} onValueChange={(val) => onChange(val as AspectRatioOption)}>
+      <Select value={value} onValueChange={(val) => {
+        console.log("Selected aspect ratio:", val);
+        setAspectRatio(val as AspectRatioOption);
+      }}>
+
         <SelectTrigger className="bg-background/50">
           <SelectValue placeholder="Select aspect ratio" />
         </SelectTrigger>

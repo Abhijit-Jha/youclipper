@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { formatSecondsToHHMMSS } from '../lib/utils/handleTimeUnits';
+import { AspectRatioOption, DownloadType, VideoQuality } from '@/types/video';
 
 //Yt url
 interface YoutubeURLStore {
@@ -8,25 +9,12 @@ interface YoutubeURLStore {
     clearYoutubeVideoURL: () => void;
 }
 
-export const useYoutubeURLStore = create<YoutubeURLStore>((set) => ({
-    youtubeVideoURL: "",
-    setYoutubeVideoURL: (url) => set({ youtubeVideoURL: url }),
-    clearYoutubeVideoURL: () => set({ youtubeVideoURL: "" }),
-}));
-
-
 //videoId
 interface VideoIDStore {
     videoId: string;
     setVideoID: (videoId: string) => void;
     clearVideoID: () => void;
 }
-
-export const useVideoIDStore = create<VideoIDStore>((set) => ({
-    videoId: "",
-    setVideoID: (videoId) => set({ videoId: videoId }),
-    clearVideoID: () => set({ videoId: "" }),
-}));
 
 // start and end time
 interface ClippingWindowState {
@@ -36,6 +24,38 @@ interface ClippingWindowState {
     setEndTime: (val: string) => void;
     resetTimes: (duration: number) => void;
 }
+
+interface AspectRatioState {
+    aspectRatio: AspectRatioOption;
+    setAspectRatio: (val: AspectRatioOption) => void;
+    resetAspectRatio: () => void;
+}
+
+interface QualityState {
+    quality: VideoQuality;
+    setQuality: (val: VideoQuality) => void;
+    resetQuality: () => void;
+}
+
+
+interface TypeStore {
+    type: DownloadType;
+    setType: (val: DownloadType) => void;
+    reset: () => void;
+}
+
+export const useYoutubeURLStore = create<YoutubeURLStore>((set) => ({
+    youtubeVideoURL: "",
+    setYoutubeVideoURL: (url) => set({ youtubeVideoURL: url }),
+    clearYoutubeVideoURL: () => set({ youtubeVideoURL: "" }),
+}));
+
+export const useVideoIDStore = create<VideoIDStore>((set) => ({
+    videoId: "",
+    setVideoID: (videoId) => set({ videoId: videoId }),
+    clearVideoID: () => set({ videoId: "" }),
+}));
+
 
 export const useClippingWindowStore = create<ClippingWindowState>((set) => ({
     startTime: "00:00:00",
@@ -51,14 +71,6 @@ export const useClippingWindowStore = create<ClippingWindowState>((set) => ({
         }),
 }));
 
-//aspect Ratio
-type AspectRatio = 'fullscreen' | 'reels' | 'squared';
-
-interface AspectRatioState {
-    aspectRatio: AspectRatio;
-    setAspectRatio: (val: AspectRatio) => void;
-    resetAspectRatio: () => void;
-}
 
 export const useAspectRatioStore = create<AspectRatioState>((set) => ({
     aspectRatio: "fullscreen",
@@ -69,15 +81,6 @@ export const useAspectRatioStore = create<AspectRatioState>((set) => ({
 }));
 
 
-// Quality - 360p default 1080 720....
-type VideoQuality = '360p' | '720p' | '1080p' | '144p' | 'audio';
-
-interface QualityState {
-    quality: VideoQuality;
-    setQuality: (val: VideoQuality) => void;
-    resetQuality: () => void;
-}
-
 export const useQualityStore = create<QualityState>((set) => ({
     quality: '360p',
 
@@ -86,14 +89,6 @@ export const useQualityStore = create<QualityState>((set) => ({
     resetQuality: () => set({ quality: '360p' }),
 }));
 
-//Type of 
-type DownloadType = "audio" | "video";
-
-interface TypeStore {
-    type: DownloadType;
-    setType: (val: DownloadType) => void;
-    reset: () => void;
-}
 
 export const useTypeStore = create<TypeStore>((set) => ({
     type: "video",

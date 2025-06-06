@@ -8,10 +8,8 @@ import { useVideoIDStore, useYoutubeURLStore } from "../contexts/videoContext";
 import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { combinedVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
 import { Loader2 } from "lucide-react"; // Spinner icon
+import { VideoInputProps } from "@/types/video";
 
-interface VideoInputProps {
-  onVideoSubmit: (youtubeVideoURL: string, videoId: string) => void;
-}
 
 export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
   const { youtubeVideoURL, setYoutubeVideoURL } = useYoutubeURLStore();

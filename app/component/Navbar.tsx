@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Scissors } from "lucide-react";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/Button";
-import ContinueWithGoogleModal from "./ui/Modal";
+import ContinueWithGoogleModal from "./ui/GoogleModal";
 import { useSession } from "next-auth/react";
 import UserProfile from "./ui/UserProfile";
 import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";

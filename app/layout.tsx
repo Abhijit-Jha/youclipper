@@ -5,6 +5,7 @@ import { ThemeProvider } from './component/ThemeProvider'
 import { SessionProvider } from 'next-auth/react'
 import { Navbar } from './component/Navbar'
 import { BackgroundEffect } from './component/BackgroundEffect'
+import { Toaster } from 'sonner'
 
 
 const inter = Inter({
@@ -46,6 +47,7 @@ export default function RootLayout({
               </div>
             </div>
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

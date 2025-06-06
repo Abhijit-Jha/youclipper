@@ -47,7 +47,7 @@ const TrimOptions = ({ duration }: { duration: number }) => {
                 />
             </div>
 
-            <AspectRatioSelector value={aspectRatio} onChange={setAspectRatio} />
+            <AspectRatioSelector value={aspectRatio} />
         </div>
     )
 }

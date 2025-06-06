@@ -1,7 +1,10 @@
 "use client";
 
-import { Check, Zap, Shield, Server } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "../component/ui/Button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import WaitingListModal from "../component/ui/WaitingList";
 // import { Button } from "@/components/ui/Button";
 
 const plans = [
@@ -16,6 +19,7 @@ const plans = [
             "Community support",
         ],
         cta: "Start for Free",
+        // no onclick in this 
     },
     {
         name: "Pro",
@@ -47,12 +51,19 @@ const plans = [
 ];
 
 export default function PricingPage() {
+    const [open, setOpen] = useState(false);
+    const route = useRouter();
+    const onClickFunctions = {
+        'Free': () => route.push('/clip'),
+        'Pro': () => setOpen(true),
+        'Self-Host': () => window.open("https://github.com/Abhijit-Jha/youclipper", "_blank")
+    };
     return (
         <div className="container mx-auto px-4 py-20">
             <div className="text-center mb-12">
                 <h1 className="text-4xl font-bold text-white">Simple, transparent pricing</h1>
                 <p className="text-muted-foreground mt-3 text-lg max-w-2xl mx-auto">
-                    Whether you're just starting out or scaling up, there's a plan for you.
+                    We are currently not providing any premium Plans Join the waiting List for future access
                 </p>
             </div>
 
@@ -61,8 +72,8 @@ export default function PricingPage() {
                     <div
                         key={plan.name}
                         className={`rounded-xl p-6 border ${plan.highlight
-                                ? "border-primary shadow-lg bg-primary/5"
-                                : "border-white/10"
+                            ? "border-primary shadow-lg bg-primary/5"
+                            : "border-white/10"
                             }`}
                     >
                         <div className="mb-4">
@@ -87,17 +98,16 @@ export default function PricingPage() {
 
                         <Button
                             className={`w-full ${plan.highlight
-                                    ? "bg-primary text-white hover:bg-primary/90"
-                                    : "border text-white border-white/20 bg-transparent hover:bg-white/10"
+                                ? "bg-primary text-white hover:bg-primary/90"
+                                : "border text-white border-white/20 bg-transparent hover:bg-white/10"
                                 }`}
-                            onClick={() =>
-                                window.open("https://github.com/Abhijit-Jha/youclipper", "_blank")
-                            }
+                            onClick={() => onClickFunctions[plan.name]?.()}
                         >
                             {plan.cta}
                         </Button>
                     </div>
                 ))}
+                {open && <WaitingListModal open={open} setOpen={setOpen} />}
             </div>
         </div>
     );

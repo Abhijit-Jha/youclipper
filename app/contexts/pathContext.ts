@@ -6,17 +6,24 @@ interface CombinedVideoPathStore {
     clearCombinedVideoPath: () => void;
 }
 
+interface TrimmedVideoPathStore {
+    trimmedVideoPath: string;
+    setTrimmedVideoPath: (path: string) => void;
+    clearTrimmedVideoPath: () => void;
+}
+
+interface FinalVideoPathStore {
+    finalVideoPath: string;
+    setFinalVideoPath: (path: string) => void;
+    clearFinalVideoPath: () => void;
+}
 export const combinedVideoPathStore = create<CombinedVideoPathStore>((set) => ({
     combinedVideoPath: "",
     setCombinedVideoPath: (path) => set({ combinedVideoPath: path }),
     clearCombinedVideoPath: () => set({ combinedVideoPath: "" }),
 }));
 
-interface TrimmedVideoPathStore {
-    trimmedVideoPath: string;
-    setTrimmedVideoPath: (path: string) => void;
-    clearTrimmedVideoPath: () => void;
-}
+
 
 export const trimmedVideoPathStore = create<TrimmedVideoPathStore>((set) => ({
     trimmedVideoPath: "",
@@ -24,13 +31,6 @@ export const trimmedVideoPathStore = create<TrimmedVideoPathStore>((set) => ({
     clearTrimmedVideoPath: () => set({ trimmedVideoPath: "" }),
 }));
 
-
-
-interface FinalVideoPathStore {
-    finalVideoPath: string;
-    setFinalVideoPath: (path: string) => void;
-    clearFinalVideoPath: () => void;
-}
 
 export const finalVideoPathStore = create<FinalVideoPathStore>((set) => ({
     finalVideoPath: "",

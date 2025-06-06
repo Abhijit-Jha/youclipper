@@ -1,21 +1,17 @@
+import { QueueStatusResponse } from "@/types/api";
 import axios, { AxiosResponse } from "axios";
 import { JWT } from "next-auth/jwt";
 
-// Define the expected response structure
-interface QueueStatusResponse {
-    currentWaitingJobs: number;
-    statusOfYourJob: "waiting" | "active" | "completed" | string;
-    qualityJobStatus?: "waiting" | "active" | "completed" | "failed" | "not found" | string;
-}
-
-const BASE_URL = 'http://localhost:3001/';
+import dotenv from "dotenv"
+dotenv.config()
+const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 
 export async function trackQueue(
     jobId: number,
     qualityJobId: number | null,
     token: JWT
 ): Promise<QueueStatusResponse> {
-    const url = `${BASE_URL}api/queue/status/${jobId}`;
+    const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}/api/queue/status/${jobId}`;
     const body = {
         qualityJobId: qualityJobId || null,
     };

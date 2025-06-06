@@ -1,7 +1,10 @@
-const BASE_URL = process.env.BACKEND_URL! || 'http://localhost:3001';
+
 import { JWT } from "next-auth/jwt";
 import axios from "axios";
 import { api } from "../apiCalls";
+import dotenv from "dotenv"
+dotenv.config()
+const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 
 export async function getJobStatus(
     jobType: "download" | "combine" | "trim" | "quality",
@@ -9,7 +12,7 @@ export async function getJobStatus(
     token: JWT
 ) {
     let endpoint = "";
-    console.log("The current job type is ",jobType);
+    console.log("The current job type is ", jobType);
     switch (jobType) {
         case "download":
             endpoint = api["downloadStatus"];
@@ -27,8 +30,8 @@ export async function getJobStatus(
             throw new Error("Invalid job type");
     }
 
-    const url = `${BASE_URL}${endpoint}${jobId}`;
-    console.log("url is ",url);
+    const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${endpoint}${jobId}`;
+    console.log("url is ", url);
 
     try {
         const req = await axios.get(url, {
@@ -39,6 +42,6 @@ export async function getJobStatus(
         return req.data;
     } catch (error) {
         console.error(`Failed to get ${jobType} status for job ${jobId}:`, error);
-        throw error; 
+        throw error;
     }
 }

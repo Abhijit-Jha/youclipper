@@ -8,7 +8,7 @@ import { VideoInput } from "./component/VideoInput";
 import { useRouter } from "next/navigation";
 import TrimOptions from "./component/ui/TrimOptions";
 import DownloadOption from "./component/ui/DownloadOption";
-import { Footer } from "./component/ui/footer";
+import { Footer } from "./component/footer";
 export const features = [
   {
     title: "Fast Processing",

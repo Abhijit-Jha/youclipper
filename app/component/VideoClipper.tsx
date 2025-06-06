@@ -22,31 +22,13 @@ import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 import TrimOptions from "./ui/TrimOptions";
 import { freeTrialUsed } from "../lib/controller/setTrialUsed";
-
-interface VideoClipperProps {
-    videoId: string;
-    duration: number;
-    onBack: () => void;
-}
-
-type DownloadType = "audio" | "video";
-
-type VideoQuality = "144p" | "360p" | "720p" | "1080p" | "audio";
-
-interface DownloadOption {
-    title: string;
-    resolution: string;
-    premium: boolean;
-    quality: VideoQuality;
-    type: DownloadType;
-}
+import { DownloadOptionType, LoadingStatesType, VideoClipperProps } from "@/types/video";
 
 export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) => {
     const { startTime, endTime, setStartTime, setEndTime } = useClippingWindowStore();
     const { aspectRatio, setAspectRatio } = useAspectRatioStore();
     const { combineCompleted } = useCombineJobStore();
     const [retry, setRetry] = useState<boolean>(false);
-    const [clipType, setClipType] = useState("Fullscreen");
     const [isDownloadOpen, setIsDownloadOpen] = useState(false);
     const { combinedVideoPath, setCombinedVideoPath } = combinedVideoPathStore();
     const { trimmedVideoPath, setTrimmedVideoPath } = trimmedVideoPathStore();
@@ -61,7 +43,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     const { stepNo } = useStepsStore();
     const router = useRouter();
 
-    const downloadOptions: DownloadOption[] = [
+    const downloadOptions: DownloadOptionType[] = [
         { title: "Video / 144p", resolution: "256×144", premium: false, quality: "144p", type: "video" },
         { title: "Video / 360p", resolution: "640×360", premium: false, quality: "360p", type: "video" },
         { title: "Video / 720p", resolution: "1280×720", premium: true, quality: "720p", type: "video" },
@@ -70,7 +52,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     ];
 
 
-    const loadingStates = [
+    const loadingStates: LoadingStatesType[] = [
         { text: "Preparing everything for you..." },
         { text: "Downloading high-quality video and audio 🎥🔊" },
         { text: "Merging audio and video into one seamless file 🎬" },
@@ -80,14 +62,15 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         { text: "All set! Your download will begin shortly ⬇️" },
     ];
 
-    const [retryAttempts, setRetryAttempts] = useState(0);
+    const [retryAttempts, setRetryAttempts] = useState<number>(0);
     const { qualityJobId, qualityCompleted, setQualityCompleted, setQualityJobId } = useQualityJobStore();
     const { finalVideoPath, setFinalVideoPath } = finalVideoPathStore();
     const { quality } = useQualityStore()
     const { retryDownload, setRetryDownload } = retryQualityDownloadStore();
     const { downloadURL, setDownloadURL } = downloadURLStore();
     const { setYoutubeVideoURL } = useYoutubeURLStore();
-    const { setVideoID } = useVideoIDStore()
+    const { setVideoID } = useVideoIDStore();
+    const { setDownloadClicked } = downloadClickedStore()
 
     useEffect(() => {
         if (!downloadURL) return;
@@ -100,6 +83,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         document.body.removeChild(link);
         setStep(7);
         console.log("⬇️ Download started from:", downloadURL);
+        setDownloadClicked(false);
     }, [downloadURL]);
 
     useEffect(() => {
@@ -321,7 +305,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
             setDownloadURL("");
             setVideoID("");
             setYoutubeVideoURL("");
-            setAspectRatio("fullscreen");
+            // setAspectRatio("fullscreen");
 
             // Redirect after 3 seconds
             setTimeout(() => {

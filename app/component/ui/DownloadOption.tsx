@@ -10,19 +10,20 @@ import { downloadClickedStore, retryQualityDownloadStore } from "@/app/contexts/
 import { useRouter } from "next/navigation";
 import { freeTrialUsed } from "@/app/lib/controller/setTrialUsed";
 import { getFreeTrialStatus } from "@/app/lib/controller/getFreeTrailStatus";
+import { toast } from "sonner";
+import { VideoQuality } from "@/types/video";
 
-type DownloadType = "audio" | "video";
-type VideoQuality = '360p' | '720p' | '1080p' | '144p' | 'audio';
-
-interface DownloadOptionProps {
+// You can place this in a shared types file if you want
+type DownloadOptionProps = {
     title: string;
     premium?: boolean;
-    quality: VideoQuality,
-    type: DownloadType
-}
+    quality: VideoQuality;
+    type: "audio" | "video";
+};
+
 
 const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptionProps) => {
-    const { setQuality } = useQualityStore();
+const { setQuality } = useQualityStore();
     const { setType } = useTypeStore(); // TODO : will handle audio and video later
     const { aspectRatio } = useAspectRatioStore();
     const { setQualityCompleted, setQualityJobId } = useQualityJobStore();
@@ -37,9 +38,13 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
         const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
         const canDownload = isPremium || !isFreeTrialUsed;
         if (!canDownload) {
-            router.push('/pricing');
+            toast('You have used your free trial. Upgrade to premium!');
+            setTimeout(() => {
+                router.push('/pricing');
+            }, 1500);
             return;
         }
+
         setQualityCompleted(false);
         setQuality(quality);
         setType(type);

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { addToWaitlist } from "../lib/controller/addToWaiting";
 
 const socials = [
     {
@@ -127,6 +128,7 @@ export function Footer() {
                                     </div>
                                     <button
                                         type="submit"
+                                        onClick={async()=> await addToWaitlist(email)}
                                         className="px-4 py-2.5 bg-primary rounded-lg font-medium transition-all duration-200 flex items-center gap-2 group"
                                     >
                                         {isSubscribed ? (

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { api } from "../apiCalls";
 import dotenv from 'dotenv';
-dotenv.config();
-
+dotenv.config()
+const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 export async function startDownload(youtubeVideoURL: string, token: string) {
-    const BASE_URL = process.env.BACKEND_URL!;
-    const url = `http://localhost:3001${api["startDownload"]}`;
+
+    const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${api["startDownload"]}`;
     console.log("url is", url);
 
     try {
