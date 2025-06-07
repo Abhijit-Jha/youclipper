@@ -12,7 +12,6 @@ export async function getJobStatus(
     token: JWT
 ) {
     let endpoint = "";
-    console.log("The current job type is ", jobType);
     switch (jobType) {
         case "download":
             endpoint = api["downloadStatus"];

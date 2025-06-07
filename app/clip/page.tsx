@@ -35,13 +35,13 @@ export default function ClipPage() {
     const { stepNo, setStep } = useStepsStore();
     console.log("Currenlty on step NO", stepNo);
 
-    useEffect(() => {
-        trackQueue(downloadJobId, qualityJobId, token).then(
-            ({ currentWaitingJobs, statusOfYourJob }) => {
-                setQueueStatus(currentWaitingJobs, statusOfYourJob);
-            }
-        );
-    }, [downloadCompleted, combineCompleted, qualityCompleted]);
+    // useEffect(() => {
+    //     trackQueue(downloadJobId, qualityJobId, token).then(
+    //         ({ currentWaitingJobs, statusOfYourJob }) => {
+    //             setQueueStatus(currentWaitingJobs, statusOfYourJob);
+    //         }
+    //     );
+    // }, [downloadCompleted, combineCompleted, qualityCompleted]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -62,7 +62,7 @@ export default function ClipPage() {
                 if (combineCompleted) return;
 
                 const data = await getJobStatus("download", downloadJobId, token);
-
+                console.log('Hello Download status',data);
                 if (data.state === 'completed') {
                     setDownloadCompleted(true);
                     clearInterval(timer); // stop polling
@@ -86,7 +86,6 @@ export default function ClipPage() {
     }, [downloadJobId, token, downloadCompleted]);
 
     //To poll for the combineProgress
-
     useEffect(() => {
         // Downloading is not done so we will not check for combine progress
         if (!downloadCompleted) return;

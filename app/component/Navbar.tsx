@@ -39,9 +39,6 @@ export const Navbar = () => {
 
   useEffect(() => {
     setIsAuthenticated(status == 'authenticated');
-    console.log("Authentiaced", status);
-    // setToken(session?.user.id) //works
-    console.log(session)
   }, [session, status])
 
   return (

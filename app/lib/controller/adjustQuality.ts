@@ -13,13 +13,12 @@ export async function adjustVideoQuality({
     resolution,
     token,
 }: AdjustVideoQualityParams) {
-    console.log({ resolution, aspectRatio })
     const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${api['quality']}?resolution=${resolution}&aspectRatio=${aspectRatio}`;
     const body = {
         trimmedVideoPath,
         videoId,
     };
-
+    console.log('Quality Job started')
     try {
         const response = await axios.post(url, body, {
             headers: {

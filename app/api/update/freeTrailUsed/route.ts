@@ -11,7 +11,6 @@ dotenv.config();
 export async function POST(req: NextRequest) {
     await connectToDB();
     const session = await getServerSession(authOptions);
-    console.error("Hello from route.ts")
     if (!session?.user?.email) {
         return NextResponse.json({
             message: "Unauthorized",

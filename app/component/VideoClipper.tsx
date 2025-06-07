@@ -119,7 +119,6 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         const timer = setInterval(async () => {
             try {
                 const data = await getJobStatus("quality", qualityJobId, token);
-                console.log("Your data is ", data);
                 if (data.state === 'completed') {
                     setStep(5); //4.quality job done -> 5. TP
                     const url = getFileDownloadUrl(data.progress.fileId);
@@ -152,6 +151,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                 const job = await trimVideo(combinedVideoPath, videoId, startTime, endTime, token);
                 if (!job || !job.jobId) {
                     console.error("Can't trim");
+                    toast('There is some issue from our side');
                     return;
                 }
                 setTrimJobId(job.jobId);
@@ -184,8 +184,6 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     clearInterval(timer); // stop polling
                     // trimmed Path -> store
                     setTrimmedVideoPath(data.progress.trimmedVideoPath);
-                    console.log("Trim completed:", data);
-                    console.log("The Trimmed VIdeo Path is ", data.progress.trimmedVideoPath);
                 } else if (data.state === 'failed') {
                     console.log("Trim failed:", data);
                     clearInterval(timer); // stop polling on failure too

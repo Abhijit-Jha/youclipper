@@ -12,7 +12,6 @@ export const AspectRatioSelector = ({ value }: AspectRatioSelectorProps) => {
     <div className="space-y-2">
       <label className="text-sm font-medium">Aspect Ratio</label>
       <Select value={value} onValueChange={(val) => {
-        console.log("Selected aspect ratio:", val);
         setAspectRatio(val as AspectRatioOption);
       }}>
 
