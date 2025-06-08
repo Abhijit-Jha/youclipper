@@ -9,7 +9,7 @@ const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 export async function trackQueue(
     jobId: number,
     qualityJobId: number | null,
-    token: JWT
+    token: string
 ): Promise<QueueStatusResponse> {
     const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}/api/queue/status/${jobId}`;
     const body = {

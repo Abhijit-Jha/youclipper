@@ -1,7 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import dotenv from "dotenv";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../lib/db/MongoClient";
 import User from "../lib/db/Schema";
 import { connectToDB } from "../lib/db/connectToDb";
@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
         await User.create({
           ...user,
           isPremium: false,
-          isFreeTrialUsed: false,
+          isFreeTrialUsed: true,
         });
       }
       return true;
@@ -41,7 +41,7 @@ export const authOptions: AuthOptions = {
         const dbUser = await User.findOne({ email: user.email });
         const customToken = jwt.sign(
           {
-            id: dbUser?._id.toString(),
+            id: (dbUser?._id as string).toString(),
             name: dbUser?.name,
             email: dbUser?.email,
             isPremium: dbUser?.isPremium,
@@ -52,7 +52,7 @@ export const authOptions: AuthOptions = {
         );
 
         token.accessToken = customToken;
-        token.id = dbUser?._id.toString();
+        token.id = (dbUser?._id as string).toString();
         token.isPremium = dbUser?.isPremium ?? false;
         token.isFreeTrialUsed = dbUser?.isFreeTrialUsed ?? true;
       }

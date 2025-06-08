@@ -2,7 +2,7 @@ import { JWT } from "next-auth/jwt";
 import { getJobStatus } from "./polling";
 
 
-export const startPollingJob = (type: "download" | "combine", jobId: number, token: JWT, onComplete: (data: any) => void) => {
+export const startPollingJob = (type: "download" | "combine", jobId: number, token: string, onComplete: (data: any) => void) => {
     const timer = setInterval(async () => {
         try {
             const data = await getJobStatus(type, jobId, token);

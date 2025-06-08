@@ -13,7 +13,8 @@ const plans = [
         price: "₹0",
         description: "For casual creators who want to try out YouClipper.",
         features: [
-            "1 Free Trial",
+            "Nothing Literally Nothing!!",
+            "We Don't have server :(",
             "480p and 720p resolution support",
             "Basic trimming & editing",
             "Community support",
@@ -53,7 +54,7 @@ const plans = [
 export default function PricingPage() {
     const [open, setOpen] = useState(false);
     const route = useRouter();
-    const onClickFunctions = {
+    const onClickFunctions: { [key: string]: () => void } = {
         'Free': () => route.push('/clip'),
         'Pro': () => setOpen(true),
         'Self-Host': () => window.open("https://github.com/Abhijit-Jha/youclipper", "_blank")

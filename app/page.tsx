@@ -9,66 +9,9 @@ import { useRouter } from "next/navigation";
 import TrimOptions from "./component/ui/TrimOptions";
 import DownloadOption from "./component/ui/DownloadOption";
 import { Footer } from "./component/footer";
-export const features = [
-  {
-    title: "Fast Processing",
-    description:
-      "Experience lightning-fast video clipping and rendering powered by optimized backend processing.",
-    link: "#fast-processing",
-  },
-  {
-    title: "Open Source",
-    description:
-      "YouClipper is fully open-source, allowing transparency, flexibility, and contributions from developers worldwide.",
-    link: "https://github.com/Abhijit-Jha/youclipper",
-  },
-  {
-    title: "HD Output",
-    description:
-      "Download high-definition output videos with clarity preserved, suitable for sharing and publishing.",
-    link: "#hd-output",
-  },
-  {
-    title: "Privacy First",
-    description:
-      "All video processing is secure and handled responsibly—your content stays yours.",
-    link: "#privacy",
-  },
-  {
-    title: "No Watermark",
-    description:
-      "Your output videos are clean and professional—no forced branding or watermarks added.",
-    link: "#no-watermark",
-  },
-  {
-    title: "Low Pricing",
-    description:
-      "Affordable pricing plans tailored for everyone—from casual users to content creators.",
-    link: "#pricing",
-  },
-  {
-    title: "Easy to Use",
-    description:
-      "Intuitive UI with guided steps makes trimming and downloading videos effortless for everyone.",
-    link: "#how-it-works",
-  },
-  {
-    title: "Cross-Platform",
-    description:
-      "Built to work smoothly across all major browsers and devices—desktop or mobile.",
-    link: "#cross-platform",
-  },
-];
-
-
-const downloadOptions = [
-  { title: "Video / 144p", resolution: "256×144", premium: false, quality: "144p", type: "video" },
-  { title: "Video / 360p", resolution: "640×360", premium: false, quality: "360p", type: "video" },
-  { title: "Video / 720p", resolution: "1280×720", premium: true, quality: "720p", type: "video" },
-  { title: "Video / 1080p", resolution: "1920×1080", premium: true, quality: "1080p", type: "video" },
-  { title: "Audio", resolution: "—", premium: false, quality: "audio", type: "audio" },
-];
-
+import { AppleCardsCarouselDemo } from "./component/Examples";
+import { features } from "./lib/store/features";
+import { downloadOptions } from "./lib/store/downloadOptions";
 
 export default function Home() {
   const route = useRouter();
@@ -144,6 +87,7 @@ export default function Home() {
         </div>
       </section>
 
+      <AppleCardsCarouselDemo />
       {/* GitHub Section */}
       {/* GitHub & Community Section */}
       <section className="container mx-auto px-4 py-20 text-center">

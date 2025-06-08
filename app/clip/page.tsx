@@ -35,13 +35,14 @@ export default function ClipPage() {
     const { stepNo, setStep } = useStepsStore();
     console.log("Currenlty on step NO", stepNo);
 
-    // useEffect(() => {
-    //     trackQueue(downloadJobId, qualityJobId, token).then(
-    //         ({ currentWaitingJobs, statusOfYourJob }) => {
-    //             setQueueStatus(currentWaitingJobs, statusOfYourJob);
-    //         }
-    //     );
-    // }, [downloadCompleted, combineCompleted, qualityCompleted]);
+    useEffect(() => {
+        if(!token) return;
+        trackQueue(downloadJobId, qualityJobId, token).then(
+            ({ currentWaitingJobs, statusOfYourJob }) => {
+                setQueueStatus(currentWaitingJobs, statusOfYourJob);
+            }
+        );
+    }, [downloadCompleted, combineCompleted, qualityCompleted]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -77,7 +78,7 @@ export default function ClipPage() {
                 }
             } catch (error) {
                 console.error("Error while polling Trim status:", error);
-                // You can decide to clearInterval here or continue retrying
+                // clearInterval here or continue retrying
                 // clearInterval(timer);
             }
         }, 5000);
@@ -135,7 +136,8 @@ export default function ClipPage() {
 
             //We will get these details from db and not from session as we are using JWT
             const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
-            if (isPremium || !isFreeTrialUsed) {
+            
+            if ((isPremium || !isFreeTrialUsed) && token) {
                 const data = await startDownload(youtubeVideoURL, token);
 
                 if (data.success === false) {

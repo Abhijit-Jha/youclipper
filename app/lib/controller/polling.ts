@@ -9,7 +9,7 @@ const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 export async function getJobStatus(
     jobType: "download" | "combine" | "trim" | "quality",
     jobId: number,
-    token: JWT
+    token: string
 ) {
     let endpoint = "";
     switch (jobType) {

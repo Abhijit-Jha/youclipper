@@ -3,7 +3,7 @@ export interface AdjustVideoQualityParams {
     videoId: string;
     aspectRatio: string;
     resolution: string;
-    token: JWT;
+    token: string;
 }
 
 

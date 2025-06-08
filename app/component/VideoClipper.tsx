@@ -87,7 +87,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
     }, [downloadURL]);
 
     useEffect(() => {
-        if (!retryDownload || qualityCompleted || !trimmedVideoPath) return;
+        if (!retryDownload || qualityCompleted || !trimmedVideoPath || !token) return;
 
         const retryTimeout = setTimeout(async () => {
             try {
@@ -114,7 +114,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
 
     //Start polling qualityJobId for status
     useEffect(() => {
-        if (!qualityJobId || !combineCompleted || !trimCompleted || qualityCompleted || !trimmedVideoPath) return;
+        if (!qualityJobId || !combineCompleted || !trimCompleted || qualityCompleted || !trimmedVideoPath || !token) return;
 
         const timer = setInterval(async () => {
             try {
@@ -232,7 +232,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
 
         setIsTrimming(true); // show loader
         //First check if the combined step  is done or not
-        if (!combineCompleted || !combinedVideoPath) {
+        if (!combineCompleted || !combinedVideoPath || !token) {
             // retry after 5 sec
             setRetry(true);
             setIsDownloadOpen(true);
@@ -300,10 +300,12 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
             setTrimmedVideoPath("");
             setQualityCompleted(false);
             setFinalVideoPath("");
+            setStartTime("00:00:00");
+            setEndTime(formatSecondsToHHMMSS(duration));
             setDownloadURL("");
             setVideoID("");
             setYoutubeVideoURL("");
-            // setAspectRatio("fullscreen");
+            setAspectRatio("fullscreen");
 
             // Redirect after 3 seconds
             setTimeout(() => {

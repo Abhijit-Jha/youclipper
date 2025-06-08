@@ -19,11 +19,12 @@ type DownloadOptionProps = {
     premium?: boolean;
     quality: VideoQuality;
     type: "audio" | "video";
+    onClick?: () => void
 };
 
 
 const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptionProps) => {
-const { setQuality } = useQualityStore();
+    const { setQuality } = useQualityStore();
     const { setType } = useTypeStore(); // TODO : will handle audio and video later
     const { aspectRatio } = useAspectRatioStore();
     const { setQualityCompleted, setQualityJobId } = useQualityJobStore();
@@ -38,7 +39,7 @@ const { setQuality } = useQualityStore();
         const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
         const canDownload = isPremium || !isFreeTrialUsed;
         if (!canDownload) {
-            toast('You have used your free trial. Upgrade to premium!');
+            toast("Your trial ride ends here 🛑 — Premium is your next stop! 🎟️");
             setTimeout(() => {
                 router.push('/pricing');
             }, 1500);
