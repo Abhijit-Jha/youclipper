@@ -116,7 +116,7 @@ export default function Home() {
             className="border border-gray-300 text-foreground/80 hover:text-foreground px-6 py-4 flex items-center gap-2 hover:bg-white/5 transition"
             onClick={() =>
               window.open(
-                "https://github.com/Abhijit-Jha/youclipper#self-hosting",
+                "https://github.com/Abhijit-Jha/youclipper/blob/master/README.md#-ready-to-self-host-lets-get-started",
                 "_blank"
               )
             }
@@ -143,7 +143,7 @@ export default function Home() {
             variant="ghost"
             className="border border-gray-300 text-foreground/80 hover:text-foreground px-6 py-4 flex items-center gap-2 hover:bg-white/5 transition"
             onClick={() =>
-              window.open("https://twitter.com/youclipper", "_blank")
+              window.open("https://X.com/youclipper", "_blank")
             }
           >
             <Twitter className="h-5 w-5 text-sky-400" />

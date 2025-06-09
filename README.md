@@ -6,11 +6,11 @@
 
 _Why Share a Whole Video? Clip What Counts._
 
-[![GitHub stars](https://img.shields.io/github/stars/Abhijit-Jha/youclipper)](https://github.com/Abhijit-Jha/youClipper)
+[![GitHub stars](https://img.shields.io/github/stars/Abhijit-Jha/youclipper)](https://github.com/Abhijit-Jha/youclipper)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Twitter Follow](https://img.shields.io/twitter/follow/youclipper?style=social)](https://twitter.com/youclipper)
+[![Twitter Follow](https://img.shields.io/twitter/follow/youclipper?style=social)](https://X.com/youclipper)
 
-[⭐ Star on GitHub](https://github.com/yourusername/youClipper) • [Follow on X](https://twitter.com/youclipper)
+[⭐ Star on GitHub](https://github.com/Abhijit-Jha/youclipper) • [Follow on X](https://X.com/youclipper)
 
 </div>
 
@@ -18,7 +18,7 @@ _Why Share a Whole Video? Clip What Counts._
 
 - [🌟 What is YouClipper?](#-what-is-youclipper)
 - [🎯 Who can use YouClipper?](#-who-can-use-youclipper)
-- [Live Demo](#-live-demo)
+- [🎥 Live Demo](#-live-demo)
 - [💝 Show Your Support](#-show-your-support)
 - [🏠 Ready to Self-Host? Let's Get Started!](#-ready-to-self-host-lets-get-started)
 - [🚀 What You'll Need First](#-what-youll-need-first)
@@ -41,9 +41,9 @@ Ever felt like sharing just that one perfect moment from a YouTube video, instea
 
 This powerful open-source platform helps you transform any long-form YouTube content into precise, professional clips — perfect for **reels, memes, educational highlights, or promotion.** Just paste a URL, pick your segment, select quality, and instantly get clean, watermark-free clips ready to share.
 
-**Want to grow your audience and increase reach?** Use **YouClipper** to create short clips that promote your long videos effectively — whether you’re showing **spiritual insights, sharing truth, gaming highlights, music edits, fitness tips, memes to spread smiles, or anything in between.**
+**Want to grow your audience and increase reach?** Use **YouClipper** to create short clips that promote your long videos effectively — whether you're showing **spiritual insights, sharing truth, gaming highlights, music edits, fitness tips, memes to spread smiles, or anything in between.**
 
-**Snip. Share. Shine.** With YouClipper, you empower your creativity and maximize your content’s impact by making every second count.
+**Snip. Share. Shine.** With YouClipper, you empower your creativity and maximize your content's impact by making every second count.
 
 ---
 
@@ -56,17 +56,42 @@ This powerful open-source platform helps you transform any long-form YouTube con
 
 ---
 
-## Live Demo
+## 🎥 Live Demo
 
-<!-- Add a video and live website URL -->
+<div align="center">
+
+### See YouClipper in Action! 🚀
+
+<video width="100%" max-width="800" controls poster="">
+  <source src="https://fra.cloud.appwrite.io/v1/storage/buckets/684040130030e9d7fa71/files/6846ba77003a73ee9d3a/view?project=683da6570006cdf22e69&mode=admin" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+_Watch how easy it is to create perfect clips from any YouTube video_
+
+**🎬 [Direct Video Link](https://fra.cloud.appwrite.io/v1/storage/buckets/684040130030e9d7fa71/files/6846ba77003a73ee9d3a/view?project=683da6570006cdf22e69&mode=admin)** - Click to open in new tab
+
+### 🌐 Try It Live
+
+Coming soon - hosted demo link will be available here!
+
+</div>
+
+---
 
 ## 💝 Show Your Support
 
-**Loving what you see?** Your support fuels our mission to keep building amazing open-source tools!
+## 🚀 Loving what you see?
 
-- 🌟 [**Star this repository**](https://github.com/yourusername/youClipper) – it means the world to us
-- 🐦 [**Follow us on Twitter**](https://twitter.com/youclipper) for updates and tips
-- 💼 [**Connect on LinkedIn**](https://linkedin.com/in/abhijit-jha1) with the creator
+Your support fuels our mission to keep building **amazing open-source tools** that empower creators and developers around the world. Every star, follow, and share helps more than you know! 🌍✨
+
+- 🌟 [**Star this repository**](https://github.com/Abhijit-Jha/youClipper) — It means the world to us and shows your love!
+- 🛠️ [**Check out the backend repo**](https://github.com/Abhijit-Jha/you-clipper-backend) — Built with care for performance & scalability.
+- 🐦 [**Follow us on Twitter**](https://X.com/youclipper) — Stay up to date with features, fixes, and cool tips.
+- 💼 [**Connect on LinkedIn**](https://linkedin.com/in/abhijit-jha1) — Say hi to the creator and share your feedback or ideas!
+- 📣 **Tell your friends** — Because great tools are even better when shared.
+
+> Together, we clip better. ❤️✂️
 
 ---
 
@@ -78,10 +103,11 @@ Want to run YouClipper on your own infrastructure? Perfect! Follow this comprehe
 
 Before diving in, make sure you have these essentials ready:
 
-- **Redis Client** – Powers our lightning-fast queue management
-- **YouTube API Key** – Enables seamless YouTube integration
-- **MongoDB Connection** – Handles all your data storage needs
-- **Node.js (v16+)** and **npm** – The foundation of our stack
+- 🧠 **Redis Client** – Powers our lightning-fast queue management.
+- 📺 **YouTube API Key** – Enables seamless YouTube integration.
+- 🗄️ **MongoDB Connection** – Handles all your data storage needs.
+- 🛡️ [**Appwrite**](https://appwrite.io) _(optional)_ – Used for authentication and backend services. You can skip or remove this if you're self-hosting without Appwrite.
+- 🧰 **Node.js (v16+)** and **npm** – The foundation of our tech stack.
 
 ---
 
@@ -134,7 +160,7 @@ Your data deserves a reliable home. Choose your preferred option:
 
 ```bash
 # Spin up MongoDB locally
-docker run --name youClipper-mongo -d -p 27017:27017 mongo
+docker run --name youclipper-mongo -d -p 27017:27017 mongo
 ```
 
 Then use this connection string:
@@ -152,8 +178,8 @@ Follow these steps to set up the frontend application:
 1. **Clone the repository:**
 
    ```bash
-   git clone <frontend-repo-url>
-   cd <frontend-directory>
+   git clone https://github.com/Abhijit-Jha/youclipper
+   cd youclipper
    ```
 
 2. **Create a `.env` file:**
@@ -163,7 +189,7 @@ Follow these steps to set up the frontend application:
    cp .env.example .env
    ```
 
-   You can find the `.env.example` file [here](link-to-env-example-file).
+   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/youclipper/.env.example).
    Update the values in `.env` with your actual credentials and configuration.
 
 3. **Install dependencies:**
@@ -186,13 +212,13 @@ Your application should now be accessible in your browser.
 
 Now let's power up the engine behind YouClipper:
 
-> 📦 **Need the backend code?** Find it at [youclipperbe repository](link-to-youclipperbe)
+> 📦 **Need the backend code?** Find it at [youclipperbe repository](https://github.com/Abhijit-Jha/you-clipper-backend)
 
 1. **Clone the repository:**
 
    ```bash
-   git clone <server-repo-url>
-   cd <server-directory>
+   git clone https://github.com/Abhijit-Jha/you-clipper-backend
+   cd you-clipper-backend
    ```
 
 2. **Create a `.env` file:**
@@ -202,7 +228,7 @@ Now let's power up the engine behind YouClipper:
    cp .env.example .env
    ```
 
-   You can find the `.env.example` file [here](link-to-env-example-file).
+   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/you-clipper-backend/.env.example).
    Update the values in `.env` with your actual credentials and configuration.
 
 3. **Install dependencies:**
@@ -268,9 +294,10 @@ Get your clean, watermark-free clip instantly and share it with the world!
 
 ## 📝 Keep These in Mind
 
-- ✅ Ensure your Redis server is running before starting the application
-- 🔒 Never commit API keys to version control – use environment variables
-- 🔄 Both frontend and backend need to be running for full functionality
+- ✅ Make sure your **Redis server** is running before starting the application.
+- 🔒 **Never commit API keys** or secrets to version control — use environment variables (`.env.local`, etc.) instead.
+- 🔄 Both the **frontend and backend** must be running for full functionality.
+- 🏗️ If you're doing **self-hosting**, you can safely **remove the Appwrite-related parts** from the codebase.
 
 ---
 
@@ -291,7 +318,7 @@ YouClipper thrives because of amazing people like you! Here's how you can contri
 - Share your ideas and feedback
 
 **🎯 Development Workflow:**
-
+Check out [CONTRIBUTING.md](https://github.com/Abhijit-Jha/youclipper/blob/master/CONTRIBUTING.md)
 1. Fork the repository
 2. Create your feature branch: `git checkout -b feature/amazing-new-feature`
 3. Commit your changes: `git commit -m 'Add amazing new feature'`

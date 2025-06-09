@@ -24,7 +24,7 @@ const socials = [
     },
     {
         icon: <Twitter className="h-5 w-5" />,
-        link: "https://twitter.com/",
+        link: "https://X.com/youclipper",
         label: "Twitter",
         color: "hover:text-blue-400",
     },
@@ -39,9 +39,9 @@ const socials = [
 const quickLinks = [
     { name: "Pricing", href: "/pricing" },
     { name: "Docs", href: "https://github.com/Abhijit-Jha/youclipper#readme" },
-    { name: "Self Host", href: "https://github.com/Abhijit-Jha/youclipper#readme" },
+    { name: "Self Host", href: "https://github.com/Abhijit-Jha/youclipper/blob/master/README.md#-ready-to-self-host-lets-get-started" },
     { name: "Star", href: "https://github.com/Abhijit-Jha/youclipper" },
-    { name: "Support", href: "https://twitter.com/youclipper" }, // TODO:Change Link
+    { name: "Support", href: "https://X.com/youclipper" }, // TODO:Change Link
 ];
 
 const features = [
