@@ -103,6 +103,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)'],
         handwritten: ['var(--font-caveat)'],
+        modernRounded: ['Poppins', 'Nunito', 'sans-serif'], // add this line
       },
     },
   },

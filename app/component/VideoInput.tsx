@@ -7,8 +7,9 @@ import { extractVideoId } from "@/app/lib/utils/extractVideoId";
 import { useVideoIDStore, useYoutubeURLStore } from "../contexts/videoContext";
 import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
 import { combinedVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
-import { Loader2 } from "lucide-react"; // Spinner icon
+import { ArrowLeft, Loader2 } from "lucide-react"; // Spinner icon
 import { VideoInputProps } from "@/types/video";
+import { useRouter } from "next/navigation";
 
 
 export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
@@ -23,7 +24,7 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
   const [buttonDisable, setButtonDisable] = useState(false);
   const [error, setError] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
-
+  const route = useRouter();
   useEffect(() => {
     setButtonDisable(false);
     setError("");
@@ -39,13 +40,14 @@ export const VideoInput = ({ onVideoSubmit }: VideoInputProps) => {
       setButtonDisable(true);
       onVideoSubmit(youtubeVideoURL, videoId);
     } else {
-      setError("❌ Invalid YouTube URL or Video ID");
+      setError("Invalid YouTube URL or Video ID");
       setButtonClicked(false);
     }
   };
 
   return (
     <div className="glass-card p-8 max-w-2xl w-full mx-auto space-y-4 ">
+      <ArrowLeft className="w-5 h-5 cursor-pointer"  onClick={()=>route.back()}/>
       <h2 className="text-2xl font-bold mb-6">Enter YouTube Video URL</h2>
       <div className="space-y-4">
         <Input

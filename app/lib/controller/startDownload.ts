@@ -6,7 +6,7 @@ const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
 export async function startDownload(youtubeVideoURL: string, token: string) {
 
     const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${api["startDownload"]}`;
-    console.log("url is", url);
+    // console.log("url is", url);
 
     try {
         const response = await axios.post(

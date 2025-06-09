@@ -13,7 +13,7 @@ export const startPollingJob = (type: "download" | "combine", jobId: number, tok
                 console.error(`${type} job failed:`, data);
                 clearInterval(timer);
             } else {
-                console.log(`${type} job in progress:`, data);
+                // console.log(`${type} job in progress:`, data);
             }
         } catch (error) {
             console.error(`Error polling ${type} job:`, error);

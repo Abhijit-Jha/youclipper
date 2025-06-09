@@ -30,7 +30,7 @@ export async function getJobStatus(
     }
 
     const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${endpoint}${jobId}`;
-    console.log("url is ", url);
+    // console.log("url is ", url);
 
     try {
         const req = await axios.get(url, {

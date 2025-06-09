@@ -18,7 +18,7 @@ export async function adjustVideoQuality({
         trimmedVideoPath,
         videoId,
     };
-    console.log('Quality Job started')
+    // console.log('Quality Job started')
     try {
         const response = await axios.post(url, body, {
             headers: {

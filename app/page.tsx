@@ -12,6 +12,7 @@ import { Footer } from "./component/footer";
 import { AppleCardsCarouselDemo } from "./component/Examples";
 import { features } from "./lib/store/features";
 import { downloadOptions } from "./lib/store/downloadOptions";
+import Demo from "./component/Demo";
 
 export default function Home() {
   const route = useRouter();
@@ -65,10 +66,10 @@ export default function Home() {
     <div className="">
       {/* Hero Section */}
       <HeroSection />
-
+      <Demo/>
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
-        <div className="flex justify-center items-center text-xl font-bold ">
+        <div className="flex justify-center items-center relative text-3xl md:text-4xl font-bold  text-transparent mb-4 text-white">
           Why <span className="text-primary ml-1">YouClipper</span>?
         </div>
 
@@ -142,7 +143,7 @@ export default function Home() {
             variant="ghost"
             className="border border-gray-300 text-foreground/80 hover:text-foreground px-6 py-4 flex items-center gap-2 hover:bg-white/5 transition"
             onClick={() =>
-              window.open("https://twitter.com/AbhijitJha_dev", "_blank")
+              window.open("https://twitter.com/youclipper", "_blank")
             }
           >
             <Twitter className="h-5 w-5 text-sky-400" />

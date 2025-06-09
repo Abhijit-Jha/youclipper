@@ -21,7 +21,10 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: 'YouClipper - Clip What Counts',
   description: 'Create and share YouTube clips by selecting start and end times.',
-  metadataBase: new URL('https://youclipper.com'),
+  metadataBase: new URL('https://youclipper.xyz'), //CHnage
+  icons: {
+    icon: '/favicon.ico'
+  }
 }
 
 export default function RootLayout({
@@ -32,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${caveat.variable} font-sans antialiased`}>
+
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

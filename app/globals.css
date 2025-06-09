@@ -120,3 +120,16 @@
     border-color: hsl(var(--primary));
   }
 }
+
+@keyframes border-move {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-border-move {
+  animation: border-move 6s linear infinite;
+}

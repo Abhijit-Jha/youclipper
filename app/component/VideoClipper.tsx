@@ -82,7 +82,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         link.click();
         document.body.removeChild(link);
         setStep(7);
-        console.log("⬇️ Download started from:", downloadURL);
+        // console.log("⬇️ Download started from:", downloadURL);
         setDownloadClicked(false);
     }, [downloadURL]);
 
@@ -91,7 +91,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
 
         const retryTimeout = setTimeout(async () => {
             try {
-                console.log("🔁 Retrying adjustVideoQuality...");
+                // console.log("🔁 Retrying adjustVideoQuality...");
                 const data = await adjustVideoQuality({
                     trimmedVideoPath,
                     videoId,
@@ -127,13 +127,13 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     setQualityCompleted(true);
                     clearInterval(timer);
                     await freeTrialUsed();
-                    console.log("✅ Quality job completed:", data);
+                    // console.log("✅ Quality job completed:", data);
                     setFinalVideoPath(data.progress.finalVideoPath);
                 } else if (data.state === 'failed') {
                     console.error("❌ Quality job failed:", data);
                     clearInterval(timer);
                 } else {
-                    console.log("⏳ Quality job in progress...");
+                    // console.log("⏳ Quality job in progress...");
                 }
             } catch (error: any) {
                 console.error("⚠️ Error polling quality status:", error?.response?.data?.message || error.message);
@@ -155,7 +155,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     return;
                 }
                 setTrimJobId(job.jobId);
-                console.log("Retrying trim:", retryAttempts);
+                // console.log("Retrying trim:", retryAttempts);
             } catch (err) {
                 console.error("Retry trim failed:", err);
             } finally {
@@ -185,10 +185,10 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
                     // trimmed Path -> store
                     setTrimmedVideoPath(data.progress.trimmedVideoPath);
                 } else if (data.state === 'failed') {
-                    console.log("Trim failed:", data);
+                    // console.log("Trim failed:", data);
                     clearInterval(timer); // stop polling on failure too
                 } else {
-                    console.log("Trim in progress:", data);
+                    // console.log("Trim in progress:", data);
                 }
             } catch (error) {
                 console.error("Error while polling Trimming status:", error);
@@ -247,7 +247,7 @@ export const VideoClipper = ({ videoId, duration, onBack }: VideoClipperProps) =
         setTrimJobId(job.jobId);
         setRetry(false);
 
-        console.log("Trimming clip:", { videoId, startTime, endTime });
+        // console.log("Trimming clip:", { videoId, startTime, endTime });
         setIsDownloadOpen(true);
         setIsTrimming(false);
     };

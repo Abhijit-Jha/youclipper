@@ -3,10 +3,10 @@ import axios from "axios";
 export async function freeTrialUsed() {
     try {
         const response = await axios.post("/api/update/freeTrailUsed");
-        console.log("Free trial update response:", response.data);
+        // console.log("Free trial update response:", response.data);
 
         if (response.data.success) {
-            console.log("Free trial status successfully updated.");
+            // console.log("Free trial status successfully updated.");
         } else {
             console.warn("Free trial update returned success: false", response.data);
         }

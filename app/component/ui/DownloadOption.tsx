@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Button } from "./Button";
 import { Download, Star } from "lucide-react";
-import { useAspectRatioStore, useQualityStore, useTypeStore, useVideoIDStore } from "@/app/contexts/videoContext";
+import { useAspectRatioStore, useQualityStore, useTypeStore, useVideoIDStore, useYoutubeURLStore } from "@/app/contexts/videoContext";
 import { useSession } from "next-auth/react";
 import { adjustVideoQuality } from "@/app/lib/controller/adjustQuality";
 import { trimmedVideoPathStore } from "@/app/contexts/pathContext";
@@ -12,6 +12,7 @@ import { freeTrialUsed } from "@/app/lib/controller/setTrialUsed";
 import { getFreeTrialStatus } from "@/app/lib/controller/getFreeTrailStatus";
 import { toast } from "sonner";
 import { VideoQuality } from "@/types/video";
+import { saveVideoDetails } from "@/app/lib/controller/saveVideoDetails";
 
 // You can place this in a shared types file if you want
 type DownloadOptionProps = {
@@ -33,9 +34,12 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
     const { videoId } = useVideoIDStore();
     const { setRetryDownload } = retryQualityDownloadStore();
     const router = useRouter();
+    const { youtubeVideoURL } = useYoutubeURLStore();
     let token = session?.accessToken;
     const { downloadClicked, setDownloadClicked } = downloadClickedStore()
     const handleAdjustingQuality = useCallback(async () => {
+        if(!token) return;
+        if (youtubeVideoURL || token) await saveVideoDetails(youtubeVideoURL, quality, type);
         const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
         const canDownload = isPremium || !isFreeTrialUsed;
         if (!canDownload) {
@@ -51,7 +55,7 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
         setType(type);
         setDownloadClicked(true);
         if (!trimmedVideoPath || !videoId || !token) {
-            console.log("Will retry once path is there");
+            // console.log("Will retry once path is there");
             setDownloadClicked(true);
             setRetryDownload(true);
             return;
@@ -61,7 +65,7 @@ const DownloadOption = ({ title, premium = false, quality, type }: DownloadOptio
             const data = await adjustVideoQuality({ trimmedVideoPath, videoId, aspectRatio, resolution: quality, token });
             const jobID = data.jobId;
             setQualityJobId(jobID);
-            console.log('Setting quality', { title, quality, aspectRatio, trimmedVideoPath });
+            // console.log('Setting quality', { title, quality, aspectRatio, trimmedVideoPath });
             setDownloadClicked(false);
             await freeTrialUsed();
         } catch (error: any) {

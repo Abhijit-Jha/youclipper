@@ -33,10 +33,10 @@ export default function ClipPage() {
     const { data: session, status } = useSession();
     const token = session?.accessToken;
     const { stepNo, setStep } = useStepsStore();
-    console.log("Currenlty on step NO", stepNo);
+    // console.log("Currenlty on step NO", stepNo);
 
     useEffect(() => {
-        if(!token) return;
+        if (!token || !downloadCompleted) return;
         trackQueue(downloadJobId, qualityJobId, token).then(
             ({ currentWaitingJobs, statusOfYourJob }) => {
                 setQueueStatus(currentWaitingJobs, statusOfYourJob);
@@ -63,18 +63,18 @@ export default function ClipPage() {
                 if (combineCompleted) return;
 
                 const data = await getJobStatus("download", downloadJobId, token);
-                console.log('Hello Download status',data);
+                // console.log('Hello Download status',data);
                 if (data.state === 'completed') {
                     setDownloadCompleted(true);
                     clearInterval(timer); // stop polling
                     setStep(2); //Download Completed -> so step 1 completed step 2 is combining
                     //store the video and audio path to combine ->No need because backend handle this 
-                    console.log("Download completed:", data);
+                    // console.log("Download completed:", data);
                 } else if (data.state === 'failed') {
-                    console.log("Download failed:", data);
+                    // console.log("Download failed:", data);
                     clearInterval(timer); // stop polling on failure too
                 } else {
-                    console.log("Download in progress:", data);
+                    // console.log("Download in progress:", data);
                 }
             } catch (error) {
                 console.error("Error while polling Trim status:", error);
@@ -96,18 +96,18 @@ export default function ClipPage() {
             try {
                 // combineId is same as downloadID
                 const data = await getJobStatus("combine", downloadJobId, token);
-                console.log("Combine progress:", data);
+                // console.log("Combine progress:", data);
 
                 if (data.state === 'completed') {
                     setCombineCompleted(true);
                     clearInterval(timer);
                     //Store the combined output path for trimming
-                    console.log(data.progress.outputPath)
+                    // console.log(data.progress.outputPath)
                     setCombinedVideoPath(data.progress.outputPath);
                     setStep(3); //stepp 2 Combining combpleted -> step 3 : Trimming starts
-                    console.log("Combine completed:", data);
+                    // console.log("Combine completed:", data);
                 } else if (data.state === 'failed') {
-                    console.log("Combine failed:", data);
+                    // console.log("Combine failed:", data);
                     clearInterval(timer);
                 }
             } catch (error) {
@@ -124,7 +124,7 @@ export default function ClipPage() {
             const response = await getVideoDetails(videoId);
             const video = response.data.videoDetails[0];
             const durationInSeconds = parseISODurationToSeconds(video.duration);
-            console.log(video, "Video details");
+            // console.log(video, "Video details");
             setVideoId(videoId);
             setVideoDetails({
                 duration: durationInSeconds,
@@ -136,7 +136,7 @@ export default function ClipPage() {
 
             //We will get these details from db and not from session as we are using JWT
             const { isPremium, isFreeTrialUsed } = await getFreeTrialStatus();
-            
+
             if ((isPremium || !isFreeTrialUsed) && token) {
                 const data = await startDownload(youtubeVideoURL, token);
 
@@ -150,9 +150,9 @@ export default function ClipPage() {
 
                 const jobId = data.jobId;
                 setDownloadJobId(jobId);
-                console.log("✅ Job is scheduled:", jobId);
+                // console.log("✅ Job is scheduled:", jobId);
             } else {
-                console.log("❌ No trials left! No requests will be sent.");
+                // console.log("❌ No trials left! No requests will be sent.");
             }
 
 

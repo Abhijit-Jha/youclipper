@@ -20,6 +20,11 @@ export function AppleCardsCarouselDemo() {
 
 const data = [
     {
+        category : 'Spirituality',
+        title : 'Show direction to your soul',
+        src : '/life.mp4'
+    },
+    {
         category : 'Truth',
         title : 'Share the Truth with everyone',
         src : '/truth.mp4'
@@ -28,6 +33,12 @@ const data = [
         category: "Productivity",
         title: "Earn by Posting Short Clips",
         src: '/podcast.mp4',
+    },
+    
+    {
+        category : 'Gaming',
+        title : 'Show Your Skills',
+        src : '/game.mp4'
     },
     {
         category: "Music",

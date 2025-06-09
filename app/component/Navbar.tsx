@@ -8,23 +8,25 @@ import { Button } from "./ui/Button";
 import ContinueWithGoogleModal from "./ui/GoogleModal";
 import { useSession } from "next-auth/react";
 import UserProfile from "./ui/UserProfile";
-import { useCombineJobStore, useDownloadJobStore, useTrimJobStore } from "../contexts/jobIdContext";
-import { combinedVideoPathStore, finalVideoPathStore, trimmedVideoPathStore } from "../contexts/pathContext";
+
+// Skeleton components
+const ButtonSkeleton = () => (
+  <div className="h-9 w-20 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+);
+
+const UserProfileSkeleton = () => (
+  <div className="flex items-center gap-2">
+    <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+    <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+  </div>
+);
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [IsLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const { data: session, status } = useSession()
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(status == 'authenticated');
+  const { data: session, status } = useSession();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(status === 'authenticated');
 
-  const { trimCompleted } = useTrimJobStore();
-  const { downloadCompleted } = useDownloadJobStore();
-  const { combineCompleted } = useCombineJobStore();
-  const { trimmedVideoPath } = trimmedVideoPathStore();
-  const { combinedVideoPath } = combinedVideoPathStore();
-  const { finalVideoPath } = finalVideoPathStore();
-
-  // const [token,setToken] = useState();
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
@@ -38,8 +40,33 @@ export const Navbar = () => {
   }, [scrolled]);
 
   useEffect(() => {
-    setIsAuthenticated(status == 'authenticated');
-  }, [session, status])
+    setIsAuthenticated(status === 'authenticated');
+  }, [session, status]);
+
+  const renderAuthSection = () => {
+    if (status === 'loading') {
+      return <ButtonSkeleton />;
+    }
+
+    if (!isAuthenticated) {
+      return (
+        <Button
+          size="sm"
+          className="bg-primary hover:bg-primary/80 text-background font-medium"
+          onClick={() => setIsLoginModalOpen(true)}
+        >
+          Sign up
+        </Button>
+      );
+    }
+
+    return (
+      <UserProfile
+        imageUrl={session?.user?.image || ""}
+        uname={session?.user?.name || "User"}
+      />
+    );
+  };
 
   return (
     <>
@@ -60,37 +87,19 @@ export const Navbar = () => {
             <span className="sm:text-4xl text-2xl font-bold font-handwritten">YouClipper</span>
           </Link>
           <div className="flex items-center gap-6">
-            {/* <div>
-              {JSON.stringify(videoEditorState)}
-            </div> */}
-            {/* {JSON.stringify({ combineCompleted, trimCompleted, downloadCompleted, trimmedVideoPath, combinedVideoPath, finalVideoPath })} */}
             <Link
               href="/pricing"
               className="text-foreground/90 hover:text-primary transition-colors"
             >
               Pricing
             </Link>
-            {!isAuthenticated ? (
-              <Button
-                size="sm"
-                className="bg-primary hover:bg-primary/80 text-background font-medium"
-                onClick={() => setIsLoginModalOpen(true)}
-              >
-                Sign up
-              </Button>
-            ) : (
-              <UserProfile imageUrl={session?.user?.image || ""} uname={session?.user?.name || "User"} />
-            )}
-
-
+            {renderAuthSection()}
           </div>
         </nav>
-
-      </motion.header >
+      </motion.header>
       {IsLoginModalOpen && (
         <ContinueWithGoogleModal onClose={() => setIsLoginModalOpen(false)} />
-      )
-      }
+      )}
     </>
   );
 };

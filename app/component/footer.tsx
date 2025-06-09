@@ -24,13 +24,13 @@ const socials = [
     },
     {
         icon: <Twitter className="h-5 w-5" />,
-        link: "https://twitter.com/AbhijitJha_dev",
+        link: "https://twitter.com/",
         label: "Twitter",
         color: "hover:text-blue-400",
     },
     {
         icon: <Linkedin className="h-5 w-5" />,
-        link: "https://www.linkedin.com/in/abhijit-jha/",
+        link: "https://www.linkedin.com/in/abhijit-jha1/",
         label: "LinkedIn",
         color: "hover:text-blue-500",
     },
@@ -41,7 +41,7 @@ const quickLinks = [
     { name: "Docs", href: "https://github.com/Abhijit-Jha/youclipper#readme" },
     { name: "Self Host", href: "https://github.com/Abhijit-Jha/youclipper#readme" },
     { name: "Star", href: "https://github.com/Abhijit-Jha/youclipper" },
-    { name: "Support", href: "https://twitter.com/AbhijitJha_dev" }, // TODO:Change Link
+    { name: "Support", href: "https://twitter.com/youclipper" }, // TODO:Change Link
 ];
 
 const features = [
@@ -63,15 +63,27 @@ const technologies = [
         name: "ffmpeg-static",
         href: "https://www.npmjs.com/package/ffmpeg-static",
     },
+    {
+        name: "bullMQ",
+        href: "https://docs.bullmq.io/",
+    },
+    {
+        name: "Redis",
+        href: "https://redis.io/",
+    },
+    {
+        name: "Next.js",
+        href: "https://nextjs.org/",
+    },
 ];
 
 export function Footer() {
     const [email, setEmail] = useState("");
     const [isSubscribed, setIsSubscribed] = useState(false);
 
-    const handleNewsletterSubmit = (e: React.FormEvent) => {
+    const handleNewsletterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Add actual subscription logic here
+        await addToWaitlist(email);
         setIsSubscribed(true);
         setEmail("");
         setTimeout(() => setIsSubscribed(false), 3000);
@@ -128,7 +140,7 @@ export function Footer() {
                                     </div>
                                     <button
                                         type="submit"
-                                        onClick={async()=> await addToWaitlist(email)}
+                                        onClick={async () => await addToWaitlist(email)}
                                         className="px-4 py-2.5 bg-primary rounded-lg font-medium transition-all duration-200 flex items-center gap-2 group"
                                     >
                                         {isSubscribed ? (

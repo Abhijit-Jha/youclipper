@@ -7,7 +7,7 @@
     import { useRouter } from "next/navigation";
     dotenv.config()
     const NEXT_PUBLIC_NODE_BACKEND_URL = process.env.NEXT_PUBLIC_NODE_BACKEND_URL!;
-    console.log('The backend url is',NEXT_PUBLIC_NODE_BACKEND_URL);
+    // console.log('The backend url is',NEXT_PUBLIC_NODE_BACKEND_URL);
 
     export async function trimVideo(
         combinedVideoPath: string,
@@ -18,19 +18,19 @@
     ): Promise<TrimVideoResponse | null> {
         // const route = useRouter();
         const url = `${NEXT_PUBLIC_NODE_BACKEND_URL}${api['trimVideo']}?startTime=${startTime}&endTime=${endTime}`;
-        console.log("Hitting th eURL ",url);
+        // console.log("Hitting th eURL ",url);
         const body = {
             combinedVideoPath,
             videoId
         };
-        console.log(
-            combinedVideoPath,
-            videoId,
-            startTime,
-            endTime,
-            token,
-            "Hello"
-        )
+        // console.log(
+        //     combinedVideoPath,
+        //     videoId,
+        //     startTime,
+        //     endTime,
+        //     token,
+        //     "Hello"
+        // )
         try {
             const response = await axios.post<TrimVideoResponse>(url, body, {
                 headers: {
