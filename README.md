@@ -66,6 +66,7 @@ This powerful open-source platform helps you transform any long-form YouTube con
   <source src="https://fra.cloud.appwrite.io/v1/storage/buckets/684040130030e9d7fa71/files/6846ba77003a73ee9d3a/view?project=683da6570006cdf22e69&mode=admin" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+[VIDEO IS NOT SUPPORTED IN GITHUB]
 
 _Watch how easy it is to create perfect clips from any YouTube video_
 
@@ -73,7 +74,7 @@ _Watch how easy it is to create perfect clips from any YouTube video_
 
 ### 🌐 Try It Live
 
-Coming soon - hosted demo link will be available here!
+Try YouClipper [live](https://www.youclipper.xyz/)
 
 </div>
 
@@ -189,7 +190,7 @@ Follow these steps to set up the frontend application:
    cp .env.example .env
    ```
 
-   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/youclipper/.env.example).
+   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/youclipper/blob/master/.env.example).
    Update the values in `.env` with your actual credentials and configuration.
 
 3. **Install dependencies:**
@@ -228,7 +229,7 @@ Now let's power up the engine behind YouClipper:
    cp .env.example .env
    ```
 
-   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/you-clipper-backend/.env.example).
+   You can find the `.env.example` file [here](https://github.com/Abhijit-Jha/you-clipper-backend/blob/master/.env.example).
    Update the values in `.env` with your actual credentials and configuration.
 
 3. **Install dependencies:**
