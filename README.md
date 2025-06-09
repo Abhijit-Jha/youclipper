@@ -124,6 +124,17 @@ Redis is the backbone of our queue system. Here's where you can get started:
 - **[Upstash](https://upstash.com)** – Serverless Redis that scales automatically
 - **[AWS ElastiCache](https://aws.amazon.com/elasticache/)** – Enterprise-grade Redis from Amazon
 
+**Local Setup:**
+
+```bash
+# Using Docker
+docker run --name youclipper-redis -d -p 6379:6379 redis
+
+# Or install Redis locally
+# macOS: brew install redis
+# Ubuntu: sudo apt install redis-server
+```
+
 **Self-Hosted:**
 
 - **[Redis Official](https://redis.io)** – Download and run on your own servers
