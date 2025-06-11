@@ -13,6 +13,7 @@
     "@radix-ui/react-select": "^2.2.5",
     "@tabler/icons-react": "^3.34.0",
     "@types/jsonwebtoken": "^9.0.9",
+    "@vercel/analytics": "^1.5.0",
     "appwrite": "^18.1.1",
     "autoprefixer": "10.4.15",
     "axios": "^1.9.0",

@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react'
 import { Navbar } from './component/Navbar'
 import { BackgroundEffect } from './component/BackgroundEffect'
 import { Toaster } from 'sonner'
-
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -48,6 +48,7 @@ export default function RootLayout({
               <Navbar />
               <div className="container mx-auto px-4 py-8">
                 {children}
+                <Analytics />
               </div>
             </div>
           </main>
