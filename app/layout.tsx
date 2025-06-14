@@ -7,7 +7,7 @@ import { Navbar } from './component/Navbar'
 import { BackgroundEffect } from './component/BackgroundEffect'
 import { Toaster } from 'sonner'
 import { Analytics } from "@vercel/analytics/next"
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html className="dark" suppressHydrationWarning lang='en-GB'>
       <body className={`${inter.variable} ${caveat.variable} font-sans antialiased`}>
 
         <ThemeProvider
@@ -49,6 +49,7 @@ export default function RootLayout({
               <div className="container mx-auto px-4 py-8">
                 {children}
                 <Analytics />
+                <SpeedInsights />
               </div>
             </div>
           </main>

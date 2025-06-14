@@ -16,6 +16,7 @@ import { useQueueStatusStore, useStepsStore } from "../contexts/extra";
 import { trackQueue } from "../lib/controller/trackQueue";
 import { toast, Toaster } from "sonner";
 import { getFreeTrialStatus } from "../lib/controller/getFreeTrailStatus";
+import { useClippingWindowStore } from "../contexts/videoContext";
 
 
 export default function ClipPage() {
@@ -34,7 +35,14 @@ export default function ClipPage() {
     const token = session?.accessToken;
     const { stepNo, setStep } = useStepsStore();
     // console.log("Currenlty on step NO", stepNo);
-
+    const {startTime,endTime} = useClippingWindowStore()
+    console.log("Hely",{
+        videoId,
+        downloadJobId,
+        combineCompleted,
+        startTime,
+        endTime
+    })
     useEffect(() => {
         if (!token || !downloadCompleted) return;
         trackQueue(downloadJobId, qualityJobId, token).then(

@@ -82,22 +82,22 @@ const LoaderCore = ({
                         transition={{ duration: 0.5 }}
                     >
                         {index > value ? (
-                            <CheckIcon className="text-black dark:text-white" />
+                            <CheckIcon className="text-white" />
                         ) : value === index && statusOfYourJob === "processing" ? (
                             <Spinner />
                         ) : (
                             <CheckFilled
                                 className={cn(
-                                    "text-black dark:text-white",
+                                    "text-white",
                                     value === index &&
-                                    "text-black dark:text-lime-500 opacity-100"
+                                    "text-lime-500 opacity-100"
                                 )}
                             />
                         )}
                         <span
                             className={cn(
                                 " dark:text-white text-sm sm:text-base",
-                                value === index && "dark:text-lime-400"
+                                value === index && "text-lime-400"
                             )}
                         >
                             {loadingState.text}
@@ -134,15 +134,15 @@ export const MultiStepLoader = ({
                         <LoaderCore value={step} loadingStates={loadingStates} />
 
                         {/* Updated UX Card */}
-                        <div className="mt-6 w-full max-w-sm mx-auto text-center bg-white/80 dark:bg-zinc-900/80 px-6 py-4 rounded-lg shadow-md backdrop-blur-md">
-                            <p className="text-sm text-gray-700 dark:text-gray-200">
-                                <span className="font-semibold text-black dark:text-white">
+                        <div className="mt-6 w-full max-w-sm mx-auto text-center bg-zinc-900/80 px-6 py-4 rounded-lg shadow-md backdrop-blur-md">
+                            <p className="text-sm text-gray-200">
+                                <span className="font-semibold text-white">
                                     Queue Position:
                                 </span>{" "}
                                 {currentWaitingJobs}
                             </p>
-                            <p className="text-sm text-gray-700 dark:text-gray-200 mt-1">
-                                <span className="font-semibold text-black dark:text-white">
+                            <p className="text-sm text-gray-200 mt-1">
+                                <span className="font-semibold text-white">
                                     Status:
                                 </span>{" "}
                                 {statusOfYourJob}
